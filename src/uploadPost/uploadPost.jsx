@@ -1,0 +1,223 @@
+import React, { useState, useRef } from "react";
+import GNB from "../GNB/GNB";
+import Footer from "../footer/Footer";
+import Cropper from "react-cropper";
+import "cropperjs/dist/cropper.css";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import axios from "axios";
+
+const UploadPost = () => {
+  const [uploadedImage, setUploadedImage] = useState("");
+  const [imageDirectory, setImageDirectory] = useState("");
+  const [imageSelected, setImageSelected] = useState(false);
+  const [cropperHidden, setCropperHidden] = useState(false);
+  const [videoSelected, setVideoSelected] = useState(false);
+  const [videoDirectory, setVideoDirectory] = useState("");
+  const cropperRef = useRef(null);
+  const [privacy, setPrivacy] = useState("public");
+  const [imageSelectedAndCropped, setImageSelectedAndCropped] = useState(false);
+  const [videoForBlob, setVideoForBlob] = useState(null);
+
+  const [profileImageModal, setProfileImageModal] = useState(false);
+
+  const handleProfileImage = () => {
+    if (uploadedImage) {
+      setProfileImageModal(false);
+      setCropperHidden(false);
+      setImageSelectedAndCropped(true);
+    } else {
+      toast.error("이미지를 선택해주세요");
+    }
+  }
+  const handleProfileImageModalOutsideClick = (e) => {
+    if(e.target === e.currentTarget) {
+      setProfileImageModal(false);
+      setUploadedImage(null);
+      setImageDirectory("");
+      setImageSelected(false);
+    }
+  }
+
+  const handleModalCancel = () => {
+    setProfileImageModal(false);
+    setUploadedImage(null);
+    setImageDirectory("");
+    setImageSelected(false);
+  }
+  const handleCrop = () => {
+    const imageElement = cropperRef?.current?.cropper;
+    const canvas = imageElement.getCroppedCanvas();
+    const croppedImage = canvas.toDataURL("image/jpeg");
+  }
+  const endCrop = () => {
+    const imageElement = cropperRef?.current?.cropper;
+    const canvas = imageElement.getCroppedCanvas();
+    const croppedImage = canvas.toDataURL("image/jpeg");
+    // CroppedImage를 uploadedImage로 설정
+    setUploadedImage(croppedImage);
+    // Cropper를 닫기
+    setCropperHidden(true);
+    setImageSelected(true);
+  }
+
+  const handleSelectImage = (e) => {
+    // 동영상이면 비디오 태그로 미리보기
+    if (e.target.files[0].type.includes("video")) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setVideoForBlob(e.target.result);
+      }
+      reader.readAsDataURL(e.target.files[0]);
+
+      const selectedVideo = e.target.files[0];
+      setVideoDirectory(URL.createObjectURL(selectedVideo));
+      setVideoSelected(true);
+      handleModalCancel();
+    }
+    else {
+      setImageDirectory(e.target.value);
+      const selectedImage = e.target.files[0];
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setUploadedImage(reader.result);
+      }
+      reader.readAsDataURL(selectedImage);
+      setCropperHidden(false);
+    }
+  }
+  const handlePrivacyChange = () => {
+    setPrivacy((prev) => (prev === "public" ? "private" : "public"));
+  }
+  const deleteImage = () => {
+    setUploadedImage(null);
+    setImageDirectory("");
+    setImageSelected(false);
+    setImageSelectedAndCropped(false);
+  }
+
+  const handleUploadClick = () => {
+    if (imageSelectedAndCropped) {
+      // 이미지 업로드
+      // uploadedImage를 FormData로 만들어서 서버로 전송
+      // axios.post("/api/upload", formData);
+    }
+    else if (videoSelected) {
+      const formData = new FormData();
+      const blob = new Blob([videoForBlob], {type: "video/mp4"});
+      formData.append("video", blob);
+      // 썸네일 추출하여 formData에 추가, 정사각형 비율로 추출
+      // const video = document.createElement("video");
+      // video.src = videoDirectory;
+      // video.onloadeddata = () => {
+      //   const canvas = document.createElement("canvas");
+      //   canvas.width = video.videoWidth;
+      //   canvas.height = video.videoHeight;
+      //   const ctx = canvas.getContext("2d");
+      //   ctx.drawImage(video, 0, 0, video.videoWidth, video.videoHeight);
+      //   canvas.toBlob((blob) => {
+      //     formData.append("thumbnail", blob);
+      //   });
+      //   console.log(canvas.toDataURL());
+      // }
+      axios.post("/api/upload", formData, { headers: { "Content-Type": "multipart/form-data" } });
+    }
+    else {
+      toast.error("이미지 또는 비디오를 선택해주세요");
+    }
+  }
+  return (
+    <>
+    <GNB />
+    <div className="flex flex-col items-center w-full gap-10">
+      {profileImageModal &&
+      <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex justify-center items-center z-10 min-w-screen-lg" onClick={handleProfileImageModalOutsideClick}>
+        <div className="m-4 pt-20 w-full bg-white flex flex-col gap-20 items-center justify-center md:w-1/2">
+          <div className={`text-2xl md:text-3xl ${imageSelected ? 'hidden' : ''}`}>파일을 선택해주세요</div>
+          <div className={`text-2xl md:text-3xl ${!imageSelected ? 'hidden' : ''}`}>이 사진으로 설정할까요?</div>
+
+          <div className={`flex flex-col items-center justify-center ${!imageDirectory || imageSelected ? 'hidden' : ''}`} >
+            <Cropper
+              src={uploadedImage}
+              style={{height: 400, width: "100%"}}
+              initialAspectRatio={1}
+              guides={true}
+              crop={handleCrop}
+              ref={cropperRef}
+              movable={false}
+              zoomable={false}
+              scalable={false}
+              // Fixed Ratio
+            />
+          </div>
+          {uploadedImage && cropperHidden && 
+            <>
+            <div className="overflow-hidden">
+              <img id="preview" src={uploadedImage} alt="preview" className=""/>
+            </div>
+            </>
+          }
+          <div className={`flex gap-4 w-full items-center justify-center ${imageDirectory ? 'hidden' : ''}`}>
+            <input type="file" id="file2" className="hidden" accept="image/*, video/*" onChange={handleSelectImage}/>
+            <input type="text" placeholder="첨부파일" className="h-12 border border-gray-300 px-6 py-3 cursor-not-allowed" value={imageDirectory}/>
+            <label for="file2" className="bg-gray-200 mx-4 px-6 py-3 h-12 flex items-center justify-center hover:bg-gray-300">파일찾기</label>
+          </div>
+          <div className={`flex w-full items-center justify-center ${!imageDirectory || imageSelected ? '' : 'hidden'}`}>
+            <button onClick={handleModalCancel} className={`w-1/2 h-14 bg-gray-500 text-white hover:bg-gray-600 `}>취소</button>
+            <button className={`w-1/2 h-14 text-white ${!imageSelected ? 'bg-gray-300 text-gray-500 cursor-not-allowed' : 'bg-rose-500 hover:bg-rose-600'}`} onClick={handleProfileImage}>확인</button>
+          </div>
+
+          <div className={`flex w-full items-center justify-center ${(imageDirectory && !imageSelected) ? '' : 'hidden'}`}>
+            <button onClick={handleModalCancel} className={`w-1/2 h-14 bg-gray-500 text-white hover:bg-gray-600`}>취소</button>
+            <button onClick={endCrop} className={`w-1/2 h-14 bg-rose-500 text-white hover:bg-rose-600`}>이미지 자르기</button>
+          </div>
+        </div>
+      </div>}
+
+    <div className="w-full flex flex-col items-center gap-4">
+      {
+        imageSelectedAndCropped &&
+        <>
+        <div className="overflow-hidden w-full flex justify-center items-center bg-cover bg-[url('../public/images/landing-main-background.jpg')]">
+          <img src={uploadedImage} alt="preview" className="h-96" />
+        </div> 
+        <button className="cursor-pointer " onClick={deleteImage}>
+          x
+        </button>
+        </>
+      }
+      {
+        videoSelected &&
+        <video src={videoDirectory} autoPlay ></video>
+      }
+      {
+        !imageSelectedAndCropped && !videoSelected &&
+        <>
+          <button htmlFor="file" className="cursor-pointer hover:rotate-45 transition-transform" onClick={() => setProfileImageModal(true)}>
+            <img src="/images/add-plus.webp" alt="add-plus" className="w-20 h-20" />
+          </button>
+          <div>업로드할 사진/비디오 선택</div>
+        </>
+      }
+    </div>
+
+    {/* 경계선 */}
+    <div className="w-full border-b-2 border-gray-300"></div>
+
+    <div className="flex justify-between w-full justify-center items-center px-4">
+      <div>공개 설정</div>
+      <div>
+        <button onClick={handlePrivacyChange} className="text-rose-600 hover:text-rose-800 font-bold" >{privacy === "public" ? "공개" : "비공개"}</button>
+      </div>
+    </div>
+    <div className="w-full">
+      <textarea placeholder="내용을 입력해주세요" className="w-full h-96 border-2 border-gray-300 p-4"></textarea>
+    </div>
+    <button onClick={handleUploadClick} className="w-full h-14 bg-rose-500 text-white hover:bg-rose-600">업로드</button>
+  </div>
+  <Footer />
+  </>
+  )
+}
+
+export default UploadPost;

@@ -3,7 +3,8 @@ import GNB from '../GNB/GNB';
 import Footer from '../footer/Footer';
 import { Link, useNavigate } from "react-router-dom";
 import { useRecoilState } from 'recoil';
-import { isLoggedInState } from '../atoms';
+import { isLoggedInState, registeredTodayState } from '../atoms';
+import axios from 'axios';
 
 const fakeRegister = (username, password) => {
   return new Promise((resolve, reject) => {
@@ -14,82 +15,87 @@ const fakeRegister = (username, password) => {
 };
 
 const RegisterPage = () => {
+  const [email, setEmail] = useState('');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [uncorrect, setUncorrect] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useRecoilState(isLoggedInState);
+  const [registeredToday, setRegisteredToday] = useRecoilState(registeredTodayState);
   const navigate = useNavigate();
+  const [isRegistered, setIsRegistered] = useState(false);
 
   const validateCredentials = (username, password) => {
     // 아이디와 비밀번호의 유효성을 검사하는 정규 표현식
-    const usernameRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/;
+    const usernameRegex = /^[가-힣a-zA-Z0-9]{2,}$/;
     const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
+    const emailRegex = /^[a-zA-Z0-9]+@[a-zA-Z0-9]+\.[A-Za-z]+$/;
   
     // 아이디와 비밀번호가 각각 조건에 맞는지 검사
     const isUsernameValid = usernameRegex.test(username);
     const isPasswordValid = passwordRegex.test(password);
+    const isEmailValid = emailRegex.test(email);
   
     return {
       isUsernameValid,
-      isPasswordValid
+      isPasswordValid,
+      isEmailValid
     };
   };
 
   const handleRegister = async (e) => {
     e.preventDefault();
     try {
-      const { isUsernameValid, isPasswordValid } = validateCredentials(username, password);
+      const { isUsernameValid, isPasswordValid, isEmailValid } = validateCredentials(username, password);
       if (!isUsernameValid) {
-        throw new Error('아이디는 6자리 이상의 영문과 숫자의 조합이어야 합니다.');
+        throw new Error('닉네임은 2자 이상의 한글, 영문, 숫자로 이루어져야 합니다.');
       } else if (!isPasswordValid) {
-        throw new Error('비밀번호는 8자리 이상의 영문과 숫자의 조합이어야 합니다.');
+        throw new Error('비밀번호는 8자리 이상의 영문, 숫자, 특수문자로 이루어져야 합니다.');
       } else if (password !== confirmPassword) {
         throw new Error('비밀번호가 일치하지 않습니다.');
+      } else if (!isEmailValid) {
+        throw new Error('이메일 형식이 올바르지 않습니다.');
       }
-      setIsLoading(true);
-      await fakeRegister();
-      setIsLoading(false);
-      // 회원가입 요청을 보내고 응답을 받아옵니다.
-      // const response = await fetch('/api/register', {
-      //   method: 'POST',
-      //   headers: {
-      //     'Content-Type': 'application/json'
-      //   },
-      //   body: JSON.stringify({ username, password })
-      // });
-  
-      // if (!response.ok) {
-      //   throw new Error('회원가입 요청에 실패했습니다.');
-      // }
-  
-      // const data = await response.json();
-  
-      // 회원가입 성공 시 로그인 상태를 설정하고, 로그인 화면으로 이동합니다.
-      setIsLoggedIn(true);
-      localStorage.setItem('loggedIn', true);
     } catch (error) {
       setIsLoading(false);
       setUncorrect(error.message);
+      return;
     }
+    localStorage.setItem('registeredToday', true);
+    axios.post('http://110.10.3.11:8090/join', {
+      name: username,
+      email: email,
+      password: password
+    }).then((res) => {
+      console.log(res);
+      if (res.data.success === true) {
+        setIsRegistered(true);
+      } else {
+        setUncorrect('이미 존재하는 이메일입니다.');
+      }
+    }
+    ).catch((error) => {
+      setUncorrect('이미 존재하는 이메일입니다.');
+    });
   };
   
   const handleProfileButtonClick = () => {
-    navigate('/profile');
+    navigate('/login');
   };
 
   return (
     <>
       <GNB />
       <div className='flex flex-col items-center py-40'>
-        {isLoggedIn ?
+        {isRegistered ?
         <div className='w-full flex flex-col items-center'>
           <div className='text-4xl my-16'>
-            <h2>회원가입에 성공했어요 !</h2>
-            <h2 className='font-bold text-rose-500'>지금 바로 프로필 입력하러 가요</h2>
+            <h2>회원이 되셨어요 !</h2>
+            <br />
+            <h2 className='font-bold text-rose-500'>지금 바로 로그인 해보세요.</h2>
           </div>
-          <button onClick={handleProfileButtonClick} className="w-3/5 bg-rose-400 hover:bg-rose-500 h-16 border rounded-lg px-10 text-lg" type="submit">프로필 페이지로 이동</button>
+          <button onClick={handleProfileButtonClick} className="w-3/5 bg-rose-400 hover:bg-rose-500 h-16 border rounded-lg px-10 text-lg" type="submit">로그인 페이지로 이동</button>
         </div> : 
         <>
         <div className='text-4xl w-3/5 my-16'>
@@ -97,13 +103,21 @@ const RegisterPage = () => {
         <h2 className='font-bold text-rose-500'>핑크 덤벨</h2>
       </div>
         <form onSubmit={handleRegister} className='w-full flex flex-col items-center gap-6'>
+
+        <input
+              type="text"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder='이메일'
+              className="w-3/5 h-16 border rounded-lg px-10 text-lg"
+            />
           <div className="w-full justify-center flex">
             <label></label>
             <input
               type="text"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              placeholder='아이디'
+              placeholder='닉네임'
               className="w-3/5 h-16 border rounded-lg px-10 text-lg"
             />
           </div>

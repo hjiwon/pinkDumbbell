@@ -4,6 +4,7 @@ import Footer from '../footer/Footer';
 import { Link, useNavigate } from "react-router-dom";
 import { useRecoilState } from 'recoil';
 import { isLoggedInState } from '../atoms';
+import axios from 'axios';
 
 const LoginPage = () => {
   const [username, setUsername] = useState('');
@@ -13,8 +14,7 @@ const LoginPage = () => {
   const navigate = useNavigate();
 
   const validateCredentials = (username, password) => {
-    // 아이디와 비밀번호의 유효성을 검사하는 정규 표현식
-    const usernameRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/;
+    const usernameRegex = /^[a-zA-Z0-9]+@[a-zA-Z0-9]+\.[A-Za-z]+$/;
     const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
   
     // 아이디와 비밀번호가 각각 조건에 맞는지 검사
@@ -32,32 +32,36 @@ const LoginPage = () => {
     try {
       const { isUsernameValid, isPasswordValid } = validateCredentials(username, password);
       if (!isUsernameValid) {
-        throw new Error('아이디는 6자리 이상의 영문과 숫자의 조합이어야합니다.');
+        throw new Error('이메일 형식이어야합니다.');
       } else if (!isPasswordValid) {
         throw new Error('비밀번호는 8자리 이상의 영문과 숫자의 조합이어야합니다.');
       }
-
-      // const response = await fetch('/api/login', {
-      //   method: 'POST',
-      //   headers: {
-      //     'Content-Type': 'application/json'
-      //   },
-      //   body: JSON.stringify({ username, password })
-      // });
-  
-      // if (!response.ok) {
-      //   throw new Error('로그인 요청에 실패했습니다.');
-      // }
-  
-      // const data = await response.json();
-  
-      setIsLoggedIn(true);
-      localStorage.setItem('loggedIn', true);
-      navigate('/');
-
+      setUncorrect("잠시만 기다려주세요...");
     } catch (error) {
       setUncorrect(error.message);
+      return;
     }
+    axios.post('http://110.10.3.11:8090/login', {
+      username: username,
+      password: password
+    }).then((res) => {
+      console.log(res);
+      if (res.status === 200) {
+        setIsLoggedIn(true);
+        localStorage.setItem('loggedIn', 'true');
+        localStorage.setItem('userid', res.headers.userid);
+        localStorage.setItem('token', res.headers.authorization);
+        console.log(res);
+        console.log(res.headers);
+        navigate('/');
+      } else {
+        setUncorrect('아이디 또는 비밀번호가 틀렸습니다.');
+      }
+    }
+    ).catch((error) => {
+      console.log(error);
+      setUncorrect('아이디 또는 비밀번호가 틀렸습니다.');
+    });
   };
 
   return (
@@ -75,7 +79,7 @@ const LoginPage = () => {
               type="text"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              placeholder='아이디'
+              placeholder='이메일'
               className="w-3/5 h-16 border rounded-lg px-10 text-lg"
             />
           </div>
