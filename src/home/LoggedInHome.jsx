@@ -8,7 +8,9 @@ import {
   Label,
   Legend,
   Rectangle,
-  ResponsiveContainer
+  ResponsiveContainer,
+  LineChart,
+  Line
 } from "recharts";
 import { useState, useEffect, useRef } from "react";
 import axios from "axios";
@@ -17,25 +19,10 @@ import "cropperjs/dist/cropper.css";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useQuery } from "@tanstack/react-query";
+import UnLoggedInHome from "./UnLoggedInHome";
 
-const graphData =
-					[
-						[{
-							name: "백엔드에서",
-							me: 169,
-							competitor: 173
-						}],
-						[{
-							name: "정한",
-							me: 65,
-							competitor: 67
-						}],
-						[{
-							name: "운동 종류",
-							me: 33,
-							competitor: 35
-						}]
-					]
+import { useRecoilState } from "recoil";
+import { isLoggedInState } from "../atoms";
 
           const data2 = [
             {
@@ -61,7 +48,8 @@ const LoggedInHome = () => {
   const [profileImageModal, setProfileImageModal] = useState(false);
   const userid = localStorage.getItem('userid');
   console.log(localStorage.getItem("token"))
-  const { data, refetch, error } = useQuery({
+  const [isLoggedIn, setIsLoggedIn] = useRecoilState(isLoggedInState);
+  const { data, refetch, error, isLoading } = useQuery({
     queryKey: ["home"],
     queryFn: () => {
     console.log("fetching data");
@@ -71,8 +59,15 @@ const LoggedInHome = () => {
           Authorization: localStorage.getItem("token")
         }
       }
-    ).then((res) => res.data.response)
-    }
+    )
+    .then((res) => res.data.response)
+    .catch((err) => {
+      console.log(err);
+        // 로그인 상태 풀기
+      localStorage.removeItem("loggedIn");
+      setIsLoggedIn(false);
+    })},
+    retry: 0,
   });
   
   const [selectedCompetitor, setSelectedCompetitor] = useState(0);
@@ -321,9 +316,12 @@ const LoggedInHome = () => {
     }
   }, [])
 
+  if(isLoading) return <div>Loading...</div>;
+
   if(!data) {
     return (
       <>
+        <UnLoggedInHome />
         <ResponsiveContainer width="100%" height={400}>
         <BarChart
           width={500}
@@ -359,11 +357,29 @@ const LoggedInHome = () => {
 
 
   console.log(data);
+              {/* 
+          
+0
+: 
+{name: '데드리프트', me: '160kg', average: '130kg'}
+1
+: 
+{name: '벤치프레스', me: '100kg', average: '90kg'}
+2
+: 
+{name: '스쿼트', me: '130kg', average: '110kg'}
+
+data.graph에서 kg를 빼고 숫자만 넣어야함
+ */}
+
+  data.graph?.forEach((item) => {
+    item.me = parseInt(item.me);
+    item.average = parseInt(item.average);
+  });
+
 
   return (
     <div className="w-full h-full flex justify-center bg-cover bg-zinc-800">
-      <button onClick={actLikeSendData}>Notify !</button>
-      <button onClick={actLikeFailData}>Notify !</button>
       <ToastContainer 
       position="bottom-right"
       autoClose={5000}
@@ -650,6 +666,24 @@ const LoggedInHome = () => {
         </div>
 
         <div className="text-xl text-white pt-10">{data.name}님은 상위 {data.userPercentage}의 신체를 갖고 있어요</div>
+
+          <ResponsiveContainer width="100%" height={400}>
+        <LineChart
+          width={500}
+          height={300}
+          data={data.graph}
+        >
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis dataKey="name" />
+            {/* y축 단위로 kg 추가하기 */}
+          <YAxis label={{ value: 'kg', angle: -90, position: 'insideLeft' }} />
+          <Tooltip />
+          <Legend />
+          <Line type="monotone" dataKey="me" stroke="#8884d8" />
+          <Line type="monotone" dataKey="average" stroke="#82ca9d" />
+
+        </LineChart>
+        </ResponsiveContainer>
 
         {/* 운동 기록 */}
 

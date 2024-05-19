@@ -97,14 +97,26 @@ const UploadPost = () => {
   }
 
   const handleUploadClick = () => {
+    const formData = new FormData();
+    const text = document.querySelector("textarea").value;
+    const userId = localStorage.getItem("userid");
+    const toastId = toast("업로드 중입니다...", { autoClose: false });
+    // text라는 객체를 만들어서 그 안에 userId와 text를 넣어줌
+    const textObj = {
+      userId: userId,
+      text: text,
+    }
+
+    //formData.append("exercise", new Blob([JSON.stringify(exercise)], { type: "application/json" }));
+    formData.append("text", new Blob([JSON.stringify(textObj)], { type: "application/json" }));
+
     if (imageSelectedAndCropped) {
       // 이미지 업로드
-      // uploadedImage를 FormData로 만들어서 서버로 전송
-      // axios.post("/api/upload", formData);
+      const blobImage = new Blob([uploadedImage]);
+      formData.append("image", blobImage);
     }
     else if (videoSelected) {
-      const formData = new FormData();
-      const blob = new Blob([videoForBlob], {type: "video/mp4"});
+      const blob = new Blob([videoForBlob]);
       formData.append("video", blob);
       // 썸네일 추출하여 formData에 추가, 정사각형 비율로 추출
       // const video = document.createElement("video");
@@ -120,15 +132,40 @@ const UploadPost = () => {
       //   });
       //   console.log(canvas.toDataURL());
       // }
-      axios.post("/api/upload", formData, { headers: { "Content-Type": "multipart/form-data" } });
     }
     else {
       toast.error("이미지 또는 비디오를 선택해주세요");
+      return;
     }
+    axios.post("http://110.10.3.11:8090/community/upload", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    })
+    .then((res) => {
+      toast.update(toastId, { render: "업로드 성공!", type: "success", autoClose: 1000 });
+      setTimeout(() => {
+        window.location.href = "/community";
+      }, 1000);
+    })
+    .catch((err) => {
+      toast.update(toastId, { render: "업로드 실패!", type: "error", autoClose: 1000 });
+    });
   }
+
   return (
     <>
     <GNB />
+    <ToastContainer 
+      position="bottom-right"
+      autoClose={5000}
+      hideProgressBar={false}
+      newestOnTop={false}
+      closeOnClick
+      rtl={false}
+      pauseOnFocusLoss={false}
+      style={{width: "25%"}}
+      theme="light" />
     <div className="flex flex-col items-center w-full gap-10">
       {profileImageModal &&
       <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex justify-center items-center z-10 min-w-screen-lg" onClick={handleProfileImageModalOutsideClick}>
@@ -148,6 +185,7 @@ const UploadPost = () => {
               zoomable={false}
               scalable={false}
               // Fixed Ratio
+              aspectRatio={1}
             />
           </div>
           {uploadedImage && cropperHidden && 

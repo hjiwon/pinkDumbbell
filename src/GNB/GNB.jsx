@@ -11,6 +11,7 @@ const GNB = () => {
     localStorage.removeItem('loggedIn');
     navigate('/');
   }
+  const userid = localStorage.getItem('userid');
 
   return (
     <div className="w-full bg-zinc-700 flex justify-center">
@@ -19,8 +20,7 @@ const GNB = () => {
         <div className="flex gap-10">
           <Link to="/community">커뮤니티</Link>
           {isLoggedIn ?
-          <Link to="/profile">내 프로필</Link> :
-          null}
+          <Link to={`/profile/${userid}`}>내 프로필</Link> : null}
           {isLoggedIn ? 
           <button onClick={handleLogoutClick}>로그아웃</button> :
           <Link to="/login">로그인</Link>

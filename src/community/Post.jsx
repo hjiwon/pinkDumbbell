@@ -2,6 +2,7 @@ import axios from "axios";
 import GNB from "../GNB/GNB";
 import Footer from "../footer/Footer";
 import { useQuery } from "@tanstack/react-query";
+import { useNavigate } from "react-router-dom";
 
 const Post = () => {
   // 현재 페이지의 contentid를 가져온다.
@@ -15,6 +16,10 @@ const Post = () => {
     }
   })
   console.log(data)
+  const navigate = useNavigate();
+  const handleUserClick = (userId) => {
+    navigate(`/profile/${userId}`)
+  }
   return (
     <>
     <GNB />
@@ -28,14 +33,14 @@ const Post = () => {
         )
       }
         <div className="px-4 pt-4 mt-4 rounded-md flex items-end">
-          <img src={data?.profileImage} alt="profile" className="w-1/6 mx-auto rounded-full" />
+          <img src={data?.profileImage} alt="profile" className="w-1/6 mx-auto rounded-full" onClick={() => handleUserClick(data?.userId)} />
           <p className="w-full text-end">{data?.text}</p>
         </div>
       </div>
       {
         data?.comments?.map((comment, index) => (
           <div key={index} className="border-2 border-gray-300 p-4 my-4 rounded-md flex items-end">
-            <img src={comment.profileImage} alt="profile" className="w-1/6 mx-auto rounded-full" />
+            <img src={comment.profileImage} alt="profile" className="w-1/6 mx-auto rounded-full" onClick={() => handleUserClick(comment.userId)} />
             <p className="w-full text-end">{comment.comment}</p>
           </div>
         ))

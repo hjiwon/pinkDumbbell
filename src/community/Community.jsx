@@ -4,6 +4,7 @@ import GNB from "../GNB/GNB"
 import Footer from "../footer/Footer"
 import { useEffect, useRef } from "react"
 import { useState } from "react"
+import { useNavigate } from "react-router-dom"
 
 const pageInitial = [1, 2, 4, 5, 6, 7, 8, 9, 10]
 
@@ -42,13 +43,31 @@ const Community = () => {
     };
   }, [pageData]);
 
+  const navigate = useNavigate();
+
+  const handleImageClick = (contentId) => {
+    navigate(`/community/${contentId}`)
+  }
+
+  //동영상은 hover시 mute로 자동재생
+  const handleVideoHover = (e) => {
+    e.target.muted = true;
+    e.target.play();
+  }
+
   return (
     <>
     <GNB />
     <div className="flex flex-wrap w-full">
       {
         pageData && pageData?.map((page, index) => (
-            <img key={index} src={page.address} alt={page.contentType} className="w-1/2 sm:w-1/3 aspect-square" />
+          page.contentType === "image" 
+          ?
+          <img key={index} src={page.thumbnail} alt={page.contentType} className={`w-1/2 sm:w-1/3 aspect-square cursor-pointer `} onClick={() => handleImageClick(page.contentId)} />
+          :
+          <div key={index} className="w-1/2 sm:w-1/3 aspect-square cursor-pointer" onClick={() => handleImageClick(page.contentId)} onMouseEnter={handleVideoHover}>
+            <image src={page.thumbnail} className="w-full h-full" />
+          </div>
         ))
       }
     </div>
