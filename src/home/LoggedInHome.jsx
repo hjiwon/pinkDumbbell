@@ -694,37 +694,37 @@ data.graph에서 kg를 빼고 숫자만 넣어야함
         <div className="border h-60 text-white flex w-full justify-around">
           <div className="w-1/3 flex flex-col items-center">
             <div className="h-1/3 flex items-center">
-              {data.userRecords[0].sportName}
+              {data.userRecords[0]?.sportName}
             </div>
             <div className="h-1/3 flex items-center">
-              {data.userRecords[0].record}
+              {data.userRecords[0]?.record}
             </div>
             <div className="h-1/3 flex items-center">
-              상위 {data.userRecords[1].percentage}
+              상위 {data.userRecords[1]?.percentage}
             </div>
           </div>
 
           <div className="w-1/3 border-x flex flex-col items-center">
             <div className="h-1/3 flex items-center">
-              {data.userRecords[1].sportName}
+              {data.userRecords[1]?.sportName}
             </div>
             <div className="h-1/3 flex items-center">
-              {data.userRecords[1].record}
+              {data.userRecords[1]?.record}
             </div>
             <div className="h-1/3 flex items-center">
-              상위 {data.userRecords[1].percentage}
+              상위 {data.userRecords[1]?.percentage}
             </div>
           </div>
 
           <div className="w-1/3 flex flex-col justify-center items-center">
             <div className="h-1/3 flex items-center">
-              {data.userRecords[2].sportName}
+              {data.userRecords[2]?.sportName}
             </div>
             <div className="h-1/3 flex items-center">
-              {data.userRecords[2].record}
+              {data.userRecords[2]?.record}
             </div>
             <div className="h-1/3 flex items-center">
-              상위 {data.userRecords[2].percentage}
+              상위 {data.userRecords[2]?.percentage}
             </div>
           </div>
         </div>

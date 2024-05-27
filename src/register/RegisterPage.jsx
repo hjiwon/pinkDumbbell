@@ -23,6 +23,7 @@ const RegisterPage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useRecoilState(isLoggedInState);
   const [registeredToday, setRegisteredToday] = useRecoilState(registeredTodayState);
+  const [selectedGender, setSelectedGender] = useState('');
   const navigate = useNavigate();
   const [isRegistered, setIsRegistered] = useState(false);
 
@@ -66,7 +67,8 @@ const RegisterPage = () => {
     axios.post('http://110.10.3.11:8090/join', {
       name: username,
       email: email,
-      password: password
+      password: password,
+      sex: selectedGender
     }).then((res) => {
       console.log(res);
       if (res.data.success === true) {
@@ -120,6 +122,27 @@ const RegisterPage = () => {
               placeholder='닉네임'
               className="w-3/5 h-16 border rounded-lg px-10 text-lg"
             />
+          </div>
+          {/* 남녀 성별 버튼 */}
+          <div className="w-full flex justify-center">
+            <div className="flex space-x-4 w-3/5">
+              <button
+                className={`w-1/2 h-16 border rounded-lg px-4 text-lg ${
+                  selectedGender === '남' ? 'bg-blue-500 text-white' : 'bg-gray-200'
+                }`}
+                onClick={() => setSelectedGender('남')}
+              >
+                남
+              </button>
+              <button
+                className={`w-1/2 h-16 border rounded-lg px-4 text-lg ${
+                  selectedGender === '여' ? 'bg-rose-500 text-white' : 'bg-gray-200'
+                }`}
+                onClick={() => setSelectedGender('여')}
+              >
+                여
+              </button>
+            </div>
           </div>
           <div className="w-full justify-center flex">
             <label></label>
