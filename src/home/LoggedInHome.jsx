@@ -205,13 +205,24 @@ const LoggedInHome = () => {
     }, 3000);
   }
 
+  console.log(localStorage.getItem("token"));
+
   const handleBodyModify = () => {
     ///user/{userId}/modify
-    axios.post(`http://110.10.3.11:8090/user/1/modify`, {
+    console.log(`http://110.10.3.11:8090/user/${userid}/modify`)
+    console.log(userHeight, userWeight, userMuscleMass, userBodyFat)
+    console.log(localStorage.getItem("token"))
+    axios.post(`http://110.10.3.11:8090/user/${userid}/modify`, {
       height: userHeight,
       weight: userWeight,
       muscleMass: userMuscleMass,
-      bodyFat: userBodyFat
+      fatMass: userBodyFat,
+      userId: userid
+    }, 
+    {
+      headers: {
+        Authorization: localStorage.getItem("token")
+      }
     })
     .then((res) => {
       toast.success("신체 정보가 수정되었습니다!");
@@ -226,6 +237,7 @@ const LoggedInHome = () => {
       refetch();
     })
     .catch((err) => {
+      console.log(err);
       toast.error("신체 정보 수정에 실패했습니다.");
     });
   };
@@ -239,13 +251,17 @@ const LoggedInHome = () => {
 
     const tempBlob = new Blob([exercise.record], { type: "audio/mp4" });
     const formData = new FormData();
+    console.log(exercise)
+    exercise.record = exercise.record.toString() + "kg";
     formData.append("exercise", new Blob([JSON.stringify(exercise)], { type: "application/json" }));
     formData.append("exerciseVideo", tempBlob);
     const toastId = toast.loading("운동 기록을 업로드 중입니다...");
+    const token = localStorage.getItem("token");
 
-    axios.post(`http://110.10.3.11:8090/user/1/record`, formData, {
+    axios.post(`http://110.10.3.11:8090/user/${userid}/record`, formData, {
       headers: {
-          "Content-Type": "multipart/form-data"
+          "Content-Type": "multipart/form-data",
+          Authorization: token
       }
     })
     .then((res) => {
@@ -259,7 +275,8 @@ const LoggedInHome = () => {
       refetch();
     })
     .catch((err) => {
-        toast.error("운동 기록 업로드에 실패했습니다.");
+      console.log(err);
+      toast.update(toastId, { type: "error", render: "운동 기록 업로드에 실패했습니다!", isLoading: false, autoClose: 2000 });
     });
 };
 
@@ -269,9 +286,10 @@ const LoggedInHome = () => {
     const blobImage = new Blob([uploadedImage]);
     console.log(uploadedImage)
     formData.append("profileImage", blobImage);
-    axios.post(`http://110.10.3.11:8090/user/1/profile`, formData, {
+    axios.post(`http://110.10.3.11:8090/user/${userid}/profile`, formData, {
       headers: {
-        "Content-Type": "multipart/form-data"
+        "Content-Type": "multipart/form-data",
+        Authorization: localStorage.getItem("token")
       }
     })
     .then((res) => {
@@ -286,6 +304,7 @@ const LoggedInHome = () => {
     })
     .catch((err) => {
       toast.update(toastId, { type: "error", render: "프로필 사진 업로드에 실패했습니다!", isLoading: false, autoClose: 2000 });
+      console.log(err);
     });
   }
   const handleCompetitorAdd = (competitorId) => {

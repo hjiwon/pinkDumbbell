@@ -13,9 +13,9 @@ const Profile = () => {
   console.log(userid)
   const getProfile = async () => {
     const url = `http://110.10.3.11:8090/user/${userid}/profile`
-    const res = await axios.get(url)
-    const data = res.data.response
-    return data;
+    const res = axios.get(url)
+    console.log(res)  
+    return res
   }
 
   const { data, isLoading, isError } = useQuery({
@@ -23,6 +23,7 @@ const Profile = () => {
     queryFn: getProfile,
     keepPreviousData: true,
   })
+  console.log(data)
 
   const compete = async (competitorId) => {
     const id = toast.loading("전송중입니다...");
@@ -57,21 +58,21 @@ const Profile = () => {
     return <div>Error loading profile</div>
   }
 
-  console.log(data)
+  console.log(data.data.userId, userid)
 
   return (
     <>
       <GNB />
       <div className="flex justify-center items-center w-full h-40 bg-gray-200">
-        {data && <img src={data.profileImage} alt="프로필 이미지" className="w-20 h-20 rounded-full" />}
+        {data.data && <img src={data.data.profileImage} alt="프로필 이미지" className="w-20 h-20 rounded-full" />}
       </div>
-      { data && data.userId !== userid &&
+      { data.data && data.data.userId != userid &&
         <div className="flex justify-center items-center">
-          <button className="w-1/2 h-10 bg-rose-500 hover:bg-rose-600 bold" onClick={() => compete(data.userId)}>경쟁자 등록</button>
+          <button className="w-1/2 h-10 bg-rose-500 hover:bg-rose-600 bold" onClick={() => compete(data.data.userId)}>경쟁자 등록</button>
         </div>
       }
       <div className="flex flex-wrap w-full">
-        {data && data.userContents.map((content, index) => (
+        {data.data && data.data.userContents.map((content, index) => (
           <div key={index} className="w-1/2 sm:w-1/3 aspect-square relative">
             <button onClick={() => navigate(`/community/${content.contentId}`)} className="w-full h-full">
               {content.contentType === "video" && <div className="absolute top-1/2 left-1/2">비디오</div>}
@@ -79,6 +80,14 @@ const Profile = () => {
             </button>
           </div>
         ))}
+        {
+          data.data && data.data.userContents.length === 0 && (
+            <div className="w-full h-40 flex justify-center items-center flex-col gap-20 my-20">
+              <h1>게시물이 없습니다.</h1>
+              <button onClick={() => navigate("/upload")} className="w-1/2 h-10 bg-rose-500 hover:bg-rose-600 bold">업로드 하러가기</button>
+            </div>
+          )
+        }
       </div>
       <Footer />
       <ToastContainer />
