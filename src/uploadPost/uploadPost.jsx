@@ -60,11 +60,13 @@ const UploadPost = () => {
     setCropperHidden(true);
     setImageSelected(true);
   }
+  const [fileName, setFileName] = useState("");
 
   const handleSelectImage = (e) => {
     // 동영상이면 비디오 태그로 미리보기
     if (e.target.files[0].type.includes("video")) {
       const reader = new FileReader();
+      setFileName(e.target.files[0].name);
       reader.onload = (e) => {
         setVideoForBlob(e.target.result);
       }
@@ -76,6 +78,7 @@ const UploadPost = () => {
       handleModalCancel();
     }
     else {
+      setFileName(e.target.files[0].name);
       setImageDirectory(e.target.value);
       const selectedImage = e.target.files[0];
       const reader = new FileReader();
@@ -110,14 +113,16 @@ const UploadPost = () => {
     //formData.append("exercise", new Blob([JSON.stringify(exercise)], { type: "application/json" }));
     formData.append("text", new Blob([JSON.stringify(textObj)], { type: "application/json" }));
 
+    console.log(fileName);
+
     if (imageSelectedAndCropped) {
       // 이미지 업로드
       const blobImage = new Blob([uploadedImage]);
-      formData.append("image", blobImage);
+      formData.append("image", blobImage, fileName);
     }
     else if (videoSelected) {
       const blob = new Blob([videoForBlob]);
-      formData.append("video", blob);
+      formData.append("video", blob, fileName);
       // 썸네일 추출하여 formData에 추가, 정사각형 비율로 추출
       // const video = document.createElement("video");
       // video.src = videoDirectory;
@@ -134,12 +139,13 @@ const UploadPost = () => {
       // }
     }
     else {
-      toast.error("이미지 또는 비디오를 선택해주세요");
+      toast.update(toastId, { render: "이미지 또는 비디오를 선택해주세요", type: "error", autoClose: 1000 });
       return;
     }
     axios.post("http://110.10.3.11:8090/community/upload", formData, {
       headers: {
         "Content-Type": "multipart/form-data",
+        Authorization: localStorage.getItem("token"),
       },
     })
     .then((res) => {
@@ -150,6 +156,7 @@ const UploadPost = () => {
     })
     .catch((err) => {
       toast.update(toastId, { render: "업로드 실패!", type: "error", autoClose: 1000 });
+      console.error(err.response.data.error.message);
     });
   }
 
@@ -231,7 +238,7 @@ const UploadPost = () => {
       {
         !imageSelectedAndCropped && !videoSelected &&
         <>
-          <button htmlFor="file" className="cursor-pointer hover:rotate-45 transition-transform" onClick={() => setProfileImageModal(true)}>
+          <button htmlFor="file" className="cursor-pointer hover:rotate-45 transition-transform mt-10" onClick={() => setProfileImageModal(true)}>
             <img src="/images/add-plus.webp" alt="add-plus" className="w-20 h-20" />
           </button>
           <div>업로드할 사진/비디오 선택</div>

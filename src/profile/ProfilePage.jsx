@@ -92,6 +92,10 @@ const Profile = () => {
           <button className="w-1/2 h-10 bg-rose-500 hover:bg-rose-600 bold" onClick={() => compete(data.data.userId)}>경쟁자 등록</button>
         </div>
       }
+{ data?.data && data?.data.userId == userid &&
+                <button onClick={() => navigate("/upload")} className="w-full h-16 bg-rose-500 hover:bg-rose-600 font-bold text-white text-lg">업로드 하러가기</button>
+              }
+
       <div className="flex flex-wrap w-full">
         {data.data && data.data.userContents.map((content, index) => (
           <div key={index} className="w-1/2 sm:w-1/3 aspect-square relative">
@@ -104,9 +108,6 @@ const Profile = () => {
         {
           data.data && data.data.userContents.length === 0 && (
             <div className="w-full h-40 flex justify-center items-center flex-col justify-between mb-24">
-              { data.data && data.data.userId == userid &&
-                <button onClick={() => navigate("/upload")} className="w-full h-16 bg-rose-500 hover:bg-rose-600 font-bold text-white text-lg">업로드 하러가기</button>
-              }
               <h1>게시물이 없습니다.</h1>
             </div>
           )

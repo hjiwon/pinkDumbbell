@@ -26,7 +26,7 @@ const Post = () => {
     <div className="w-1/2 mx-auto my-16">
       <div className="border-2 border-gray-300 p-4 my-4 rounded-md">
       {
-        data?.content.includes('jpg') || data?.content.includes('png') || data?.content.includes('jpeg') ? (
+        data?.thumbnail == null ? (
           <img src={data?.content} alt="content" className="w-1/2 mx-auto" />
         ) : (
           <video src={data?.content} controls className="w-1/2 mx-auto"></video>

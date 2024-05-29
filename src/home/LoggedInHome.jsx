@@ -250,11 +250,14 @@ const LoggedInHome = () => {
     }
 
     const tempBlob = new Blob([exercise.record], { type: "audio/mp4" });
+    // make random name
+    const exerciseRecordVideoName = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15) + ".mp4";
+    console.log(exerciseRecordVideoName);
     const formData = new FormData();
     console.log(exercise)
     exercise.record = exercise.record.toString() + "kg";
     formData.append("exercise", new Blob([JSON.stringify(exercise)], { type: "application/json" }));
-    formData.append("exerciseVideo", tempBlob);
+    formData.append("exerciseVideo", tempBlob, exerciseRecordVideoName);
     const toastId = toast.loading("운동 기록을 업로드 중입니다...");
     const token = localStorage.getItem("token");
 
@@ -283,9 +286,13 @@ const LoggedInHome = () => {
   const handleProfileImage = () => {
     const toastId = toast.loading("프로필 사진을 업로드 중입니다...");
     const formData = new FormData();
+    // 이미지 파일명 뽑아내기 
+    const uploadedImageName = document.getElementById("file2").files[0].name;
+    console.log(uploadedImageName);
     const blobImage = new Blob([uploadedImage]);
+    // blob에 파일명을 붙여서 전송
     console.log(uploadedImage)
-    formData.append("profileImage", blobImage);
+    formData.append("profileImage", blobImage, uploadedImageName);
     axios.post(`http://110.10.3.11:8090/user/${userid}/profile`, formData, {
       headers: {
         "Content-Type": "multipart/form-data",
@@ -513,7 +520,8 @@ data.graph에서 kg를 빼고 숫자만 넣어야함
             <div><span className="text-[#9894f8]">{data?.name}</span>님은 아직 경쟁자가 없어요</div> :
             <div className=""><span className="text-[#9894f8]">{data?.name}</span>님과 <span className="text-[#82ca9d]">{data?.competitors[selectedCompetitor]?.userName}</span>님의<br/>운동 기록을 비교해봤어요</div>
           }
-
+          { 
+          console.log(data?.profile)}
           {
           data?.profile
           ?
