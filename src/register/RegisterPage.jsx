@@ -52,7 +52,7 @@ const RegisterPage = () => {
       if (!isUsernameValid) {
         throw new Error('닉네임은 2자 이상의 한글, 영문, 숫자로 이루어져야 합니다.');
       } else if (!isPasswordValid) {
-        throw new Error('비밀번호는 8자리 이상의 영문, 숫자, 특수문자로 이루어져야 합니다.');
+        throw new Error('비밀번호는 8자리 이상의 영문, 숫자로 이루어져야 합니다.');
       } else if (password !== confirmPassword) {
         throw new Error('비밀번호가 일치하지 않습니다.');
       } else if (!isEmailValid) {

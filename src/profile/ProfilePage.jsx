@@ -101,7 +101,7 @@ const Profile = () => {
           <div key={index} className="w-1/2 sm:w-1/3 aspect-square relative">
             <button onClick={() => navigate(`/community/${content.contentId}`)} className="w-full h-full">
               {content.contentType === "video" && <div className="absolute top-1/2 left-1/2">비디오</div>}
-              <img src={content.thumbnail} alt="" className="w-full h-full object-cover" />
+              <img src={content.address} alt="" className="w-full h-full object-cover" />
             </button>
           </div>
         ))}

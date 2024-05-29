@@ -98,6 +98,19 @@ const UploadPost = () => {
     setImageSelected(false);
     setImageSelectedAndCropped(false);
   }
+  const base64ToBlob = (base64) => {
+    const [metadata, base64Data] = base64.split(',');
+    const mime = metadata.match(/:(.*?);/)[1];
+    const byteString = atob(base64Data);
+    const ab = new ArrayBuffer(byteString.length);
+    const ia = new Uint8Array(ab);
+    for (let i = 0; i < byteString.length; i++) {
+      ia[i] = byteString.charCodeAt(i);
+    }
+    console.log(mime);
+    return new Blob([ab], { type: mime });
+  };
+  
 
   const handleUploadClick = () => {
     const formData = new FormData();
@@ -109,35 +122,17 @@ const UploadPost = () => {
       userId: userId,
       text: text,
     }
-
-    //formData.append("exercise", new Blob([JSON.stringify(exercise)], { type: "application/json" }));
     formData.append("text", new Blob([JSON.stringify(textObj)], { type: "application/json" }));
 
     console.log(fileName);
 
     if (imageSelectedAndCropped) {
-      // 이미지 업로드
-      const blobImage = new Blob([uploadedImage]);
-      formData.append("image", blobImage, fileName);
-    }
-    else if (videoSelected) {
-      const blob = new Blob([videoForBlob]);
+      const blob = base64ToBlob(uploadedImage);
+      formData.append("image", blob, fileName);
+    } else if (videoSelected) {
+      const blob = base64ToBlob(videoForBlob);
       formData.append("video", blob, fileName);
-      // 썸네일 추출하여 formData에 추가, 정사각형 비율로 추출
-      // const video = document.createElement("video");
-      // video.src = videoDirectory;
-      // video.onloadeddata = () => {
-      //   const canvas = document.createElement("canvas");
-      //   canvas.width = video.videoWidth;
-      //   canvas.height = video.videoHeight;
-      //   const ctx = canvas.getContext("2d");
-      //   ctx.drawImage(video, 0, 0, video.videoWidth, video.videoHeight);
-      //   canvas.toBlob((blob) => {
-      //     formData.append("thumbnail", blob);
-      //   });
-      //   console.log(canvas.toDataURL());
-      // }
-    }
+    } 
     else {
       toast.update(toastId, { render: "이미지 또는 비디오를 선택해주세요", type: "error", autoClose: 1000 });
       return;
@@ -176,7 +171,7 @@ const UploadPost = () => {
     <div className="flex flex-col items-center w-full gap-10">
       {profileImageModal &&
       <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex justify-center items-center z-10 min-w-screen-lg" onClick={handleProfileImageModalOutsideClick}>
-        <div className="m-4 pt-20 w-full bg-white flex flex-col gap-20 items-center justify-center md:w-1/2">
+        <div className="m-4 pt-10 w-full bg-white flex flex-col gap-0 items-center justify-center md:w-1/2 md:gap-10">
           <div className={`text-2xl md:text-3xl ${imageSelected ? 'hidden' : ''}`}>파일을 선택해주세요</div>
           <div className={`text-2xl md:text-3xl ${!imageSelected ? 'hidden' : ''}`}>이 사진으로 설정할까요?</div>
 

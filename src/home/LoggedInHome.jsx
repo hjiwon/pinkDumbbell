@@ -42,7 +42,36 @@ import { isLoggedInState } from "../atoms";
             }
           ];
 
-const LoggedInHome = () => {
+const LoggedInHome = () => { 
+  const [videoSelected, setVideoSelected] = useState(false);
+  const [videoDirectory, setVideoDirectory] = useState();
+  const [videoName, setVideoName] = useState();
+  const [videoForBlob, setVideoForBlob] = useState(null);
+  const handleVideoSelected = (e) => {
+    setVideoSelected(true);
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      setVideoForBlob(e.target.result);
+    }
+    reader.readAsDataURL(document.getElementById("file2").files[0]);
+    setVideoName(document.getElementById("file2").files[0].name);
+    const targetedVideo = e.target.files[0];
+    setVideoDirectory(URL.createObjectURL(targetedVideo));
+  }
+
+  const base64ToBlob = (base64) => {
+    const [metadata, base64Data] = base64.split(',');
+    const mime = metadata.match(/:(.*?);/)[1];
+    const byteString = atob(base64Data);
+    const ab = new ArrayBuffer(byteString.length);
+    const ia = new Uint8Array(ab);
+    for (let i = 0; i < byteString.length; i++) {
+      ia[i] = byteString.charCodeAt(i);
+    }
+    return new Blob([ab], { type: mime });
+  };
+  
+
   const [bodyModal, setBodyModal] = useState(false);
   const [exerciseModal, setExerciseModal] = useState(false);
   const [profileImageModal, setProfileImageModal] = useState(false);
@@ -63,7 +92,6 @@ const LoggedInHome = () => {
     .then((res) => res.data.response)
     .catch((err) => {
       console.log(err);
-        // 로그인 상태 풀기
       localStorage.removeItem("loggedIn");
       setIsLoggedIn(false);
     })},
@@ -192,26 +220,10 @@ const LoggedInHome = () => {
     setUserWeight("");
   }
 
-  const actLikeSendData = () => {
-    const id = toast.loading("전송중입니다...");
-    setTimeout(() => {
-      toast.update(id, { type: "success", render: "전송 완료!", isLoading: false, autoClose: 2000 });
-    }, 3000);
-  }
-  const actLikeFailData = () => {
-    const id = toast.loading("전송중입니다...");
-    setTimeout(() => {
-      toast.update(id, { type: "error", render: "전송 실패!", isLoading: false, autoClose: 2000 });
-    }, 3000);
-  }
-
-  console.log(localStorage.getItem("token"));
-
   const handleBodyModify = () => {
     ///user/{userId}/modify
     console.log(`http://110.10.3.11:8090/user/${userid}/modify`)
-    console.log(userHeight, userWeight, userMuscleMass, userBodyFat)
-    console.log(localStorage.getItem("token"))
+    console.log(userHeight, userWeight, userMuscleMass, userBodyFat);
     axios.post(`http://110.10.3.11:8090/user/${userid}/modify`, {
       height: userHeight,
       weight: userWeight,
@@ -248,16 +260,17 @@ const LoggedInHome = () => {
         toast.warn("기록을 입력해주세요!");
         return;
     }
-
-    const tempBlob = new Blob([exercise.record], { type: "audio/mp4" });
     // make random name
     const exerciseRecordVideoName = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15) + ".mp4";
     console.log(exerciseRecordVideoName);
     const formData = new FormData();
-    console.log(exercise)
+
+    if (videoSelected) {
+      const videoBlob = base64ToBlob(videoForBlob);
+      formData.append("video", videoBlob, exerciseRecordVideoName);
+    }
     exercise.record = exercise.record.toString() + "kg";
     formData.append("exercise", new Blob([JSON.stringify(exercise)], { type: "application/json" }));
-    formData.append("exerciseVideo", tempBlob, exerciseRecordVideoName);
     const toastId = toast.loading("운동 기록을 업로드 중입니다...");
     const token = localStorage.getItem("token");
 
@@ -275,7 +288,7 @@ const LoggedInHome = () => {
       })
     })
     .then(() => {
-      refetch();
+      window.location.reload();
     })
     .catch((err) => {
       console.log(err);
@@ -289,9 +302,8 @@ const LoggedInHome = () => {
     // 이미지 파일명 뽑아내기 
     const uploadedImageName = document.getElementById("file2").files[0].name;
     console.log(uploadedImageName);
-    const blobImage = new Blob([uploadedImage]);
+    const blobImage = base64ToBlob(uploadedImage);
     // blob에 파일명을 붙여서 전송
-    console.log(uploadedImage)
     formData.append("profileImage", blobImage, uploadedImageName);
     axios.post(`http://110.10.3.11:8090/user/${userid}/profile`, formData, {
       headers: {
@@ -307,7 +319,7 @@ const LoggedInHome = () => {
       setImageSelected(false);
     })
     .then(() => {
-      refetch();
+      window.location.reload();
     })
     .catch((err) => {
       toast.update(toastId, { type: "error", render: "프로필 사진 업로드에 실패했습니다!", isLoading: false, autoClose: 2000 });
@@ -383,20 +395,6 @@ const LoggedInHome = () => {
 
 
   console.log(data);
-              {/* 
-          
-0
-: 
-{name: '데드리프트', me: '160kg', average: '130kg'}
-1
-: 
-{name: '벤치프레스', me: '100kg', average: '90kg'}
-2
-: 
-{name: '스쿼트', me: '130kg', average: '110kg'}
-
-data.graph에서 kg를 빼고 숫자만 넣어야함
- */}
 
   data.graph?.forEach((item) => {
     item.me = parseInt(item.me);
@@ -483,10 +481,10 @@ data.graph에서 kg를 빼고 숫자만 넣어야함
       </div>}
       {exerciseModal &&
       <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex justify-center items-center z-10 min-w-screen-lg" onClick={handleExerciseModalOutsideClick}>
-        <div className="m-4 pt-20 w-full bg-white flex flex-col gap-10 items-center justify-center md:w-1/2">
+        <div className="m-4 pt-10 w-full bg-white flex flex-col gap-10 items-center justify-center md:w-1/2">
           <div className="text-2xl md:text-3xl">1RM 기록을 입력해주세요</div>
           <span className="text-gray-400">여기서 1RM이란, 1회에 최대로 들 수 있는 무게를 말해요</span>
-          <div className="flex flex-col items-center gap-4 w-2/3 pb-10">
+          <div className="flex flex-col items-center gap-2 w-2/3">
             <select name="exercise" id="exercise" className="w-full border border-gray-300 rounded-md p-3" onChange={handleExerciseNameChange}>
               <option value="benchPress">벤치프레스</option>
               <option value="squat">스쿼트</option>
@@ -506,9 +504,20 @@ data.graph에서 kg를 빼고 숫자만 넣어야함
             <input type="text" placeholder="운동 기록(kg)" className="w-full h-10 border border-gray-300 rounded-md p-3" onChange={handleExerciseModalInput} value={exercise.record} name="exercise"/>
           </div>
           
+          <span className="text-gray-400">인증 영상도 함께 업로드해주세요!</span>
+          {
+            videoSelected &&
+            <video src={videoDirectory} autoPlay={true} className="w-1/2 h-1/2"/>
+          }
+          <div className={`flex gap-4 w-full items-center justify-center ${videoSelected ? 'hidden' : ''}`}>
+            <input type="file" id="file2" className="hidden" accept="video/*" onChange={handleVideoSelected}/>
+            <input type="text" placeholder="첨부파일" className="h-12 border border-gray-300 px-6 py-3 cursor-not-allowed"/>
+            <label for="file2" className="bg-gray-200 mx-4 px-6 py-3 h-12 flex items-center justify-center hover:bg-gray-300">파일찾기</label>
+          </div>
+          
           <div className="flex w-full items-center justify-center">
-            <button onClick={handleModalCancel} className={`w-1/2 h-14 bg-gray-500 text-white hover:bg-gray-600 ${!cropperHidden ? 'hidden' : ''}`}>취소</button>
-            <button onClick={handleExerciseRecord} className={`w-1/2 h-14 bg-rose-500 text-white hover:bg-rose-600 ${!cropperHidden ? 'hidden' : ''}`}>전송</button>
+            <button onClick={handleModalCancel} className={`w-1/2 h-14 bg-gray-500 text-white hover:bg-gray-600`}>취소</button>
+            <button onClick={handleExerciseRecord} className={`w-1/2 h-14 bg-rose-500 text-white hover:bg-rose-600`}>전송</button>
           </div>
         </div>
       </div>}
@@ -525,8 +534,13 @@ data.graph에서 kg를 빼고 숫자만 넣어야함
           {
           data?.profile
           ?
-          <div className="w-40 h-40 m-12 overflow-hidden rounded-full">
-            <img className="w-full h-full object-cover" src={`${data?.competitors[0]?.userProfile}`} alt="" /> 
+          <div className="flex items-center mb-8 flex-col justify-center">
+            <div className="w-40 h-40 mt-12 mx-12 overflow-hidden rounded-full">
+              <img className="w-full h-full object-cover" src={`${data?.profile}`} alt="" />  
+            </div>
+            <button className="text-white text-sm w-32 h-6 bg-rose-500 rounded-md hover:bg-rose-600" onClick={() => setProfileImageModal(true)}>
+              <span>프로필 수정</span>
+            </button>
           </div>
           :
           <div className="m-12 flex items-center gap-4 flex-col justify-center">
@@ -534,7 +548,7 @@ data.graph에서 kg를 빼고 숫자만 넣어야함
             <div className="hover:rotate-45 transition-transform bg-gray-200 w-40 h-40 rounded-full flex items-center justify-center hover:bg-gray-300">
               <img className="w-1/3" src="/images/add-plus.webp" alt="" />
             </div>
-            <span className="text-white text-sm">프로필 추가하기</span>
+            <span className="text-white text-sm">프로필 수정</span>
             </button>
           </div>
           }
@@ -699,8 +713,8 @@ data.graph에서 kg를 빼고 숫자만 넣어야함
           <button onClick={() => {setBodyModal(true)}} className="text-3xl text-white transition-transform hover:rotate-45 hover:text-gray-400 absolute right-5 top-5">+</button>
 
           { data.userPercentage !== "null%" ?
-          <div className="text-xl text-white pt-10">{data.name}님은 상위 {data.userPercentage}의 신체를 갖고 있어요</div> :
-          <div className="text-xl text-white pt-10">{data.name}님의 신체 정보가 없어요!</div>
+          <div className="text-xl text-white pt-10 mb-20">{data.name}님은 상위 {data.userPercentage}의 신체를 갖고 있어요</div> :
+          <div className="text-xl text-white pt-10 mb-20">{data.name}님의 신체 정보가 없어요!</div>
           }
 
           {/* 차트 오른쪽으로 20px 이동 */}
