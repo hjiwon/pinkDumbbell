@@ -16,7 +16,7 @@ const GNB = () => {
   return (
     <div className="w-full bg-zinc-700 flex justify-center">
       <div className="flex w-full max-w-screen-lg p-4 justify-between h-16 justify-center items-center text-white">
-        <Link to="/" className="text-xl font-bold">Pink Dumbbell</Link>
+        <Link to="/" className="text-xl font-bold hover:text-rose-500 transition-colors duration-300">Pink Dumbbell</Link>
         <div className="flex gap-10">
           <Link to="/community">커뮤니티</Link>
           {isLoggedIn ?

@@ -22,6 +22,7 @@ const Profile = () => {
     queryKey: ["profile", userid],
     queryFn: getProfile,
     keepPreviousData: true,
+    retry: 0,
   })
   console.log(data)
 
@@ -55,16 +56,36 @@ const Profile = () => {
   }
 
   if (isError) {
-    return <div>Error loading profile</div>
+    
+    return (
+      <>
+        <GNB />
+        <div className="flex justify-center items-center w-full h-40 bg-gray-200">
+          {<div className="w-20 h-20 rounded-full bg-gray-300"> <img src="/images/profile-simple.svg" alt="" className="opacity-50" /> </div>}
+        </div>
+        <div className="flex justify-center items-center">
+          확인할 수 없는 사용자입니다.
+        </div>
+        <div className="flex flex-wrap w-full">
+            
+        <div className="w-full h-40 flex justify-center items-center flex-col justify-between mt-24">
+          <h1>게시물이 없습니다.</h1>
+        </div>
+            
+          
+        </div>
+        <Footer />
+        <ToastContainer />
+      </>
+    )
   }
-
-  console.log(data.data.userId, userid)
 
   return (
     <>
       <GNB />
       <div className="flex justify-center items-center w-full h-40 bg-gray-200">
-        {data.data && <img src={data.data.profileImage} alt="프로필 이미지" className="w-20 h-20 rounded-full" />}
+        {data.data && data.data.profileImage && <img src={data.data.profileImage} alt="프로필 이미지" className="w-20 h-20 rounded-full" />}
+        {data.data && !data.data.profileImage && <div className="w-20 h-20 rounded-full bg-gray-300"> <img src="/images/profile-simple.svg" alt="" className="opacity-50" /> </div>}
       </div>
       { data.data && data.data.userId != userid &&
         <div className="flex justify-center items-center">
@@ -82,9 +103,11 @@ const Profile = () => {
         ))}
         {
           data.data && data.data.userContents.length === 0 && (
-            <div className="w-full h-40 flex justify-center items-center flex-col gap-20 my-20">
+            <div className="w-full h-40 flex justify-center items-center flex-col justify-between mb-24">
+              { data.data && data.data.userId == userid &&
+                <button onClick={() => navigate("/upload")} className="w-full h-16 bg-rose-500 hover:bg-rose-600 font-bold text-white text-lg">업로드 하러가기</button>
+              }
               <h1>게시물이 없습니다.</h1>
-              <button onClick={() => navigate("/upload")} className="w-1/2 h-10 bg-rose-500 hover:bg-rose-600 bold">업로드 하러가기</button>
             </div>
           )
         }

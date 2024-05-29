@@ -457,7 +457,7 @@ data.graph에서 kg를 빼고 숫자만 넣어야함
 
       {bodyModal && 
       <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex justify-center items-center z-10 min-w-screen-lg" onClick={handleBodyModalOutsideClick}>
-        <div className="m-4 pt-20 bg-white flex flex-col gap-10 items-center justify-center md:w-1/2">
+        <div className="m-4 pt-20 w-full bg-white flex flex-col gap-10 items-center justify-center md:w-1/2">
           <div className="text-2xl md:text-3xl">신체 정보를 입력해주세요</div>
           <span className="text-gray-400">적합한 경쟁자를 추천해드릴게요</span>
           <div className="flex flex-col items-center gap-4 w-2/3 pb-10">
@@ -470,13 +470,13 @@ data.graph에서 kg를 빼고 숫자만 넣어야함
           
           <div className="flex w-full items-center justify-center">
             <button onClick={handleModalCancel} className={`w-1/2 h-14 bg-gray-500 text-white hover:bg-gray-600 ${!cropperHidden ? 'hidden' : ''}`}>취소</button>
-            <button className={`w-1/2 h-14 bg-rose-500 text-white hover:bg-rose-600 ${!cropperHidden ? 'hidden' : ''}`} onClick={handleBodyModify}>이거 API 연결하기</button>
+            <button className={`w-1/2 h-14 bg-rose-500 text-white hover:bg-rose-600 ${!cropperHidden ? 'hidden' : ''}`} onClick={handleBodyModify}>전송</button>
           </div>
         </div>
       </div>}
       {exerciseModal &&
       <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex justify-center items-center z-10 min-w-screen-lg" onClick={handleExerciseModalOutsideClick}>
-        <div className="m-4 pt-20 bg-white flex flex-col gap-10 items-center justify-center md:w-1/2">
+        <div className="m-4 pt-20 w-full bg-white flex flex-col gap-10 items-center justify-center md:w-1/2">
           <div className="text-2xl md:text-3xl">1RM 기록을 입력해주세요</div>
           <span className="text-gray-400">여기서 1RM이란, 1회에 최대로 들 수 있는 무게를 말해요</span>
           <div className="flex flex-col items-center gap-4 w-2/3 pb-10">
@@ -501,13 +501,13 @@ data.graph에서 kg를 빼고 숫자만 넣어야함
           
           <div className="flex w-full items-center justify-center">
             <button onClick={handleModalCancel} className={`w-1/2 h-14 bg-gray-500 text-white hover:bg-gray-600 ${!cropperHidden ? 'hidden' : ''}`}>취소</button>
-            <button onClick={handleExerciseRecord} className={`w-1/2 h-14 bg-rose-500 text-white hover:bg-rose-600 ${!cropperHidden ? 'hidden' : ''}`}>이거 API 연결하기</button>
+            <button onClick={handleExerciseRecord} className={`w-1/2 h-14 bg-rose-500 text-white hover:bg-rose-600 ${!cropperHidden ? 'hidden' : ''}`}>전송</button>
           </div>
         </div>
       </div>}
 
       <div className="w-full max-w-screen-lg h-full relative flex flex-col items-center">
-        <div className="text-3xl flex items-center justify-around text-white">
+        <div className="text-3xl flex flex-col items-center justify-around text-white md:flex-row mt-10">
           {
             noCompetitors ? 
             <div><span className="text-[#9894f8]">{data?.name}</span>님은 아직 경쟁자가 없어요</div> :
@@ -534,15 +534,19 @@ data.graph에서 kg를 빼고 숫자만 넣어야함
 
         {/* 그래프 */}
         
-        <div className="relative flex flex-col-reverse sm:flex-row items-center justify-center w-full border border-top-white border-x-transparent gap-8 py-12">
+        <div className="relative flex flex-col items-center justify-center w-full border border-top-white border-x-transparent gap-8 py-12">
           { noCompetitors && 
-          <div className="flex flex-col items-center justify-center gap-14 text-white font-bold text-2xl">
-            <button onClick={watchCompetitors} className="w-40 h-12 bg-rose-500 hover:bg-rose-600 rounded-md">경쟁자 보러가기</button>
-          </div>
+          <>
+            <div className="flex flex-col items-center justify-center gap-14 text-white text-xl mt-10">
+              경쟁자를 추가해서 운동 기록을 비교해보세요!
+            </div>
+            <div className="flex flex-col items-center justify-center gap-14 text-white font-bold text-xl mb-10">
+              <button onClick={watchCompetitors} className="w-40 h-12 bg-rose-500 hover:bg-rose-600 rounded-md">경쟁자 보러가기</button>
+            </div>
+          </>
           }
           
          
-          <button onClick={() => {setBodyModal(true)}} className="text-3xl text-white transition-transform hover:rotate-45 hover:text-gray-400 absolute right-5 top-5">+</button>
           { !noCompetitors &&
           <div className="grid grid-cols-2 md:grid-cols-3 items-center justify-center justify-items-center content-center self-center place-items-center place-self-center justify-self-center" id="competitorGraph">
           <BarChart
@@ -683,34 +687,42 @@ data.graph에서 kg를 빼고 숫자만 넣어야함
           </div>
           }
         </div>
+        <div className="flex flex-col w-full items-center relative">
+          <button onClick={() => {setBodyModal(true)}} className="text-3xl text-white transition-transform hover:rotate-45 hover:text-gray-400 absolute right-5 top-5">+</button>
 
-        <div className="text-xl text-white pt-10">{data.name}님은 상위 {data.userPercentage}의 신체를 갖고 있어요</div>
+          { data.userPercentage !== "null%" ?
+          <div className="text-xl text-white pt-10">{data.name}님은 상위 {data.userPercentage}의 신체를 갖고 있어요</div> :
+          <div className="text-xl text-white pt-10">{data.name}님의 신체 정보가 없어요!</div>
+          }
 
-          <ResponsiveContainer width="100%" height={400}>
-        <LineChart
-          width={500}
-          height={300}
-          data={data.graph}
-        >
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="name" />
-            {/* y축 단위로 kg 추가하기 */}
-          <YAxis label={{ value: 'kg', angle: -90, position: 'insideLeft' }} />
-          <Tooltip />
-          <Legend />
-          <Line type="monotone" dataKey="me" stroke="#8884d8" />
-          <Line type="monotone" dataKey="average" stroke="#82ca9d" />
+          {/* 차트 오른쪽으로 20px 이동 */}
+          <ResponsiveContainer width="100%" height={400} className="mr-16">
+          
+          <LineChart
+              width={500}
+              height={300}
+              data={data.graph}
+            >
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="name" />
+                {/* y축 단위로 kg 추가하기 */}
+              <YAxis label={{ value: 'kg', angle: -90, position: 'insideLeft' }} />
+              <Tooltip />
+              <Legend />
+              <Line type="monotone" dataKey="me" stroke="#8884d8" />
+              <Line type="monotone" dataKey="average" stroke="#82ca9d" />
 
-        </LineChart>
-        </ResponsiveContainer>
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
 
         {/* 운동 기록 */}
 
-        <div className="border border-b-transparent flex flex-col items-center mt-16 w-full py-4 text-white text-2xl">
+        <div className="border border-b-transparent flex flex-col items-center mt-16 w-full py-4 text-white text-2xl relative">
             운동 기록
             <button onClick={() => setExerciseModal(true)} className="text-3xl text-white transition-transform hover:rotate-45 hover:text-gray-400 absolute right-5">+</button>
         </div>
-        <div className="border h-60 text-white flex w-full justify-around">
+        <div className="border h-60 text-white flex w-full justify-around mb-20">
           <div className="w-1/3 flex flex-col items-center">
             <div className="h-1/3 flex items-center">
               {data.userRecords[0]?.sportName}
