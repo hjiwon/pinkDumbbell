@@ -3,11 +3,13 @@ import GNB from "../GNB/GNB";
 import Footer from "../footer/Footer";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 
 const Post = () => {
   // 현재 페이지의 contentid를 가져온다.
   const url = window.location.href;
   const contentid = url.split('/')[4];
+  const [comment, setComment] = useState("");
   const { data, isLoading } = useQuery({
     queryKey: ["post", contentid],
     queryFn: async () => {
@@ -20,16 +22,45 @@ const Post = () => {
   const handleUserClick = (userId) => {
     navigate(`/profile/${userId}`)
   }
+  const checkIfVideo = (content) => {
+    console.log(content)
+    if (content && content.includes('.mp4' || '.mov' || '.avi' || '.mkv' || '.flv' || '.wmv' || '.3gp' || '.webm')) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+  const postComment = async (comment) => {
+    const url = `http://110.10.3.11:8090/community/${contentid}/comment`
+    axios.post(url, {
+      userId: localStorage.getItem("userid"),
+      text: comment,
+      contentId: contentid
+    },
+    {
+      headers: {
+        Authorization: localStorage.getItem("token")
+      }
+    })
+    .then((res) => {
+      window.location.reload();
+    })
+    .catch((err) => {
+      console.error(err)
+    })
+  }
+  
+
   return (
     <>
     <GNB />
     <div className="w-1/2 mx-auto my-16">
       <div className="border-2 border-gray-300 p-4 my-4 rounded-md">
       {
-        data?.thumbnail == null ? (
-          <img src={data?.content} alt="content" className="w-1/2 mx-auto" />
-        ) : (
+        checkIfVideo(data?.content) ? (
           <video src={data?.content} controls className="w-1/2 mx-auto"></video>
+        ) : (
+          <img src={data?.content} alt="content" className="w-1/2 mx-auto" />
         )
       }
         <div className="px-4 pt-4 mt-4 rounded-md flex items-end">
@@ -37,10 +68,15 @@ const Post = () => {
           <p className="w-full text-end">{data?.text}</p>
         </div>
       </div>
+      <div className="border-2 border-gray-300 p-4 my-4 rounded-md flex">
+        <img src={data?.profileImage} alt="profile" className="w-[3rem] mx-auto rounded-full" />
+        <input type="text" className="w-3/5 mx-auto" placeholder="댓글을 입력해주세요" onChange={(e) => setComment(e.target.value)} />
+        <button className="w-1/5 mx-auto bg-rose-500 hover:bg-rose-600 text-white rounded-md p-2 mt-2" onClick={() => postComment(comment)}>작성</button>
+      </div>
       {
         data?.comments?.map((comment, index) => (
           <div key={index} className="border-2 border-gray-300 p-4 my-4 rounded-md flex items-end">
-            <img src={comment.profileImage} alt="profile" className="w-1/6 mx-auto rounded-full" onClick={() => handleUserClick(comment.userId)} />
+            <img src={comment.profileImage} alt="profile" className="w-[3rem] mx-auto rounded-full" onClick={() => handleUserClick(comment.userId)} />
             <p className="w-full text-end">{comment.comment}</p>
           </div>
         ))
@@ -78,6 +114,3 @@ export default Post;
 	]
 }
 */
-
-//저는 3학년 때 소프트웨어공학 복수전공을 시작했습니다. 남들보다 1년 늦은 시작이었습니다. 하지만 알고리즘으로 프로그래밍에 입문하며, CS 과목의 필요성을 느껴서 시작한 복수전공이었습니다.
-//하지만 

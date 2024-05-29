@@ -28,9 +28,10 @@ const Profile = () => {
 
   const compete = async (competitorId) => {
     const id = toast.loading("전송중입니다...");
-    const url = `http://`
+    const url = `http://110.10.3.11:8090/home/${userid}/addCompetitor`
+    const res = axios.get(url)
     await axios.post(url, {
-      userId: userid,
+      userId: myUserid,
       competitorId, 
     })
     .then(res => {
@@ -42,6 +43,7 @@ const Profile = () => {
       })
     })
     .catch(err => {
+      console.error(err)
       toast.update(id, {
         render: "경쟁자 등록 실패",
         type: "error",
@@ -79,6 +81,7 @@ const Profile = () => {
       </>
     )
   }
+  const myUserid = localStorage.getItem("userid")
 
   return (
     <>
@@ -87,12 +90,12 @@ const Profile = () => {
         {data.data && data.data.profileImage && <img src={data.data.profileImage} alt="프로필 이미지" className="w-20 h-20 rounded-full" />}
         {data.data && !data.data.profileImage && <div className="w-20 h-20 rounded-full bg-gray-300"> <img src="/images/profile-simple.svg" alt="" className="opacity-50" /> </div>}
       </div>
-      { data.data && data.data.userId != userid &&
+      { data.data && data.data.userId != myUserid &&
         <div className="flex justify-center items-center">
-          <button className="w-1/2 h-10 bg-rose-500 hover:bg-rose-600 bold" onClick={() => compete(data.data.userId)}>경쟁자 등록</button>
+          <button className="w-full h-16 font-bold text-lg text-white bg-rose-500 hover:bg-rose-600 bold" onClick={() => compete(data.data.userId)}>경쟁자 등록</button>
         </div>
       }
-{ data?.data && data?.data.userId == userid &&
+{ data?.data && data?.data.userId == myUserid &&
                 <button onClick={() => navigate("/upload")} className="w-full h-16 bg-rose-500 hover:bg-rose-600 font-bold text-white text-lg">업로드 하러가기</button>
               }
 
@@ -107,7 +110,7 @@ const Profile = () => {
         ))}
         {
           data.data && data.data.userContents.length === 0 && (
-            <div className="w-full h-40 flex justify-center items-center flex-col justify-between mb-24">
+            <div className="w-full h-40 flex justify-center items-center flex-col justify-between mt-24">
               <h1>게시물이 없습니다.</h1>
             </div>
           )
