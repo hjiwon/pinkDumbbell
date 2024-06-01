@@ -817,26 +817,35 @@ const LoggedInHome = () => {
         {/* 추천 프로필 */}
 
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-white" id="recommendedProfile">
-        {data.recommendedUsers.map((profile, index) => (
-          <div key={index} className="max-w-sm my-20 border p-4 rounded-md">
-            <img className="w-full rounded" src={profile.userProfile} alt="post" />
-            
-            <div className="flex items-end justify-between">
-              <div className="py-4">
-                <div>
-                  <div className="font-bold text-xl">{profile.name}</div>
-                  <div>{profile.height}cm {profile.weight}kg</div>
+          {data.recommendedUsers.map((profile, index) => (
+            <div key={index} className="max-w-sm my-20 border p-4 rounded-md">
+              <img className="w-full rounded" src={profile.userProfile} alt="post" />
+              
+              <div className="flex items-end justify-between">
+                <div className="py-4">
+                  <div>
+                    <div className="font-bold text-xl">{profile.name}</div>
+                    <div>{profile.height}cm {profile.weight}kg</div>
+                  </div>
+                </div>
+                <div className="flex gap-2 items-end mb-3">
+                  <button className="text-rose-400 hover:text-rose-500 font-bold" onClick={() => handleCompetitorAdd(profile.userId)}>
+                    경쟁
+                  </button>
                 </div>
               </div>
-              <div className="flex gap-2 items-end mb-3">
-                <button className="text-rose-400 hover:text-rose-500 font-bold" onClick={() => handleCompetitorAdd(profile.userId)}>
-                  경쟁
-                </button>
-              </div>
             </div>
-          </div>
-        ))}
-    </div>
+          ))}
+      </div>
+      {
+            data.recommendedUsers.length === 0 &&
+            <div className="flex flex-col items-center justify-center gap-8 w-full h-64">
+            <div className="text-white text-xl">추천 경쟁자가 없어요!</div>
+            <div className="text-white text-xl">신체 정보를 입력해서 경쟁자를 추천받아보세요!</div>
+
+              <button onClick={() => setBodyModal(true)} className="w-40 h-12 bg-rose-500 hover:bg-rose-600 rounded-md text-white font-bold text-xl">경쟁자 보러가기</button>
+            </div>
+          }
       </div>
     </div>
   );
