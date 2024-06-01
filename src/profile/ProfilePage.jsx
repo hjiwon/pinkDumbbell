@@ -103,8 +103,8 @@ const Profile = () => {
         {data.data && data.data.userContents.map((content, index) => (
           <div key={index} className="w-1/2 sm:w-1/3 aspect-square relative">
             <button onClick={() => navigate(`/community/${content.contentId}`)} className="w-full h-full">
-              {content.contentType === "video" && <div className="absolute top-1/2 left-1/2">비디오</div>}
-              <img src={content.address} alt="" className="w-full h-full object-cover" />
+              {content.contentType === "video" && <video src={content.address} className="w-full h-full object-cover" />}
+              {content.contentType === "image" && <img src={content.address} alt="content" className="w-full h-full object-cover" />}
             </button>
           </div>
         ))}
