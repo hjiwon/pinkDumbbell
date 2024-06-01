@@ -843,7 +843,7 @@ const LoggedInHome = () => {
             <div className="text-white text-xl">추천 경쟁자가 없어요!</div>
             <div className="text-white text-xl">신체 정보를 입력해서 경쟁자를 추천받아보세요!</div>
 
-              <button onClick={() => setBodyModal(true)} className="w-40 h-12 bg-rose-500 hover:bg-rose-600 rounded-md text-white font-bold text-xl">경쟁자 보러가기</button>
+              <button onClick={() => setBodyModal(true)} className="w-40 h-12 bg-rose-500 hover:bg-rose-600 rounded-md text-white font-bold text-xl">신체정보 입력</button>
             </div>
           }
       </div>
