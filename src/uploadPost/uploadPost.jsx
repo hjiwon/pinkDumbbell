@@ -171,14 +171,14 @@ const UploadPost = () => {
     <div className="flex flex-col items-center w-full gap-10">
       {profileImageModal &&
       <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex justify-center items-center z-10 min-w-screen-lg" onClick={handleProfileImageModalOutsideClick}>
-        <div className="m-4 pt-10 w-full bg-white flex flex-col gap-0 items-center justify-center md:w-1/2 md:gap-10">
+        <div className="m-4 pt-10 w-full bg-white flex flex-col gap-10 items-center justify-center md:w-1/2 md:gap-10">
           <div className={`text-2xl md:text-3xl ${imageSelected ? 'hidden' : ''}`}>파일을 선택해주세요</div>
           <div className={`text-2xl md:text-3xl ${!imageSelected ? 'hidden' : ''}`}>이 사진으로 설정할까요?</div>
 
           <div className={`flex flex-col items-center justify-center ${!imageDirectory || imageSelected ? 'hidden' : ''}`} >
             <Cropper
               src={uploadedImage}
-              style={{height: 400, width: "100%"}}
+              style={{height: "50vh", width: "100%"}}
               initialAspectRatio={1}
               guides={true}
               crop={handleCrop}

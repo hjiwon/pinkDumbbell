@@ -417,14 +417,14 @@ const LoggedInHome = () => {
 
       {profileImageModal &&
       <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex justify-center items-center z-10 min-w-screen-lg" onClick={handleProfileImageModalOutsideClick}>
-        <div className="m-4 pt-20 w-full bg-white flex flex-col gap-20 items-center justify-center md:w-1/2">
+        <div className="m-4 pt-10 w-full bg-white flex flex-col gap-10 items-center justify-center md:w-1/2">
           <div className={`text-2xl md:text-3xl ${imageSelected ? 'hidden' : ''}`}>이미지를 선택해주세요</div>
           <div className={`text-2xl md:text-3xl ${!imageSelected ? 'hidden' : ''}`}>프로필을 설정할까요?</div>
 
           <div className={`flex flex-col items-center justify-center ${!imageDirectory || imageSelected ? 'hidden' : ''}`} >
             <Cropper
               src={uploadedImage}
-              style={{height: 400, width: "100%"}}
+              style={{width: "100%", height: "50vh"}}
               initialAspectRatio={1}
               guides={true}
               crop={handleCrop}
