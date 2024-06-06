@@ -26,19 +26,19 @@ import { isLoggedInState } from "../atoms";
 
           const data2 = [
             {
-              name: '백엔드에서',
+              name: '다른 사용자들과',
               me: 120,
-              competitor: 40,
+              average: 40,
             },
             {
-              name: '정한',
+              name: '운동 능력을',
               me: 150,
-              competitor: 100,
+              average: 100,
             },
             {
-              name: '운동 3가지',
+              name: '비교해보세요',
               me: 70,
-              competitor: 80,
+              average: 80,
             }
           ];
 
@@ -108,7 +108,7 @@ const LoggedInHome = () => {
   const [uploadedImage, setUploadedImage] = useState(null);
   const handleBodyModalInput = (e) => {
     // 숫자만 입력이 가능하도록 해야함
-    if(isNaN(e.target.value)) {
+    if(isNaN(e.target.value) && e.target.value !== "") {
       toast.warn("숫자만 입력해주세요!");
       return;
     }
@@ -127,15 +127,21 @@ const LoggedInHome = () => {
     record: ""
   });
 
+  console.log(exercise);
+
   const handleExerciseModalInput = (e) => {
-    if(isNaN(e.target.value)) {
+    if(isNaN(e.target.value) && e.target.value !== "") {
       toast.warn("숫자만 입력해주세요!");
       return;
+    }
+    let eValue = e.target.value;
+    if(e.target.value == "") {
+      eValue = "";
     }
     setExercise({
       ...exercise,
       exerciseName: document.getElementById("exercise").value,
-      record: parseFloat(e.target.value)
+      record: eValue
     });
   }
   const handleExerciseNameChange = (e) => {
@@ -713,17 +719,18 @@ const LoggedInHome = () => {
           <button onClick={() => {setBodyModal(true)}} className="text-3xl text-white transition-transform hover:rotate-45 hover:text-gray-400 absolute right-5 top-5">+</button>
 
           { data.userPercentage !== "null%" ?
-          <div className="text-xl text-white pt-10 mb-20">{data.name}님은 상위 {data.userPercentage}의 신체를 갖고 있어요</div> :
+          // userPercentage 반올림하기
+          <div className="text-xl text-white pt-10 mb-20">{data.name}님은 상위 {Math.round(parseFloat(data.userPercentage))}%의 신체를 갖고 있어요</div> :
           <div className="text-xl text-white pt-10 mb-20">{data.name}님의 신체 정보가 없어요!</div>
           }
-
-          {/* 차트 오른쪽으로 20px 이동 */}
+          {/* data2로 예시 그래프 만들어서 보여주기 */}
+          
           <ResponsiveContainer width="100%" height={400} className="mr-16">
           
           <LineChart
               width={500}
               height={300}
-              data={data.graph}
+              data={data.graph.length !== 0 ? data.graph : data2}
             >
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="name" />

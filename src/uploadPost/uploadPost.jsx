@@ -192,7 +192,8 @@ const UploadPost = () => {
           </div>
           {uploadedImage && cropperHidden && 
             <>
-            <div className="overflow-hidden">
+            <div className="overflow-hidden w-full flex justify-center items-center bg-cover h-[50vh]" >
+              {/* 50vh height */}
               <img id="preview" src={uploadedImage} alt="preview" className=""/>
             </div>
             </>
