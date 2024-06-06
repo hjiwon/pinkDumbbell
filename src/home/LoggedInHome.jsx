@@ -578,7 +578,7 @@ const LoggedInHome = () => {
           {
             noCompetitors &&
             <div className="grid grid-cols-2 md:grid-cols-3 items-center justify-center justify-items-center content-center self-center place-items-center place-self-center justify-self-center" id="competitorGraph">
-            {data.nullGraph.map((entry, index) => (
+            {data.nullGraph?.map((entry, index) => (
         <BarChart
           key={index}
           width={isMobile ? 170 : 200}
