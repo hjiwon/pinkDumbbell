@@ -573,6 +573,34 @@ const LoggedInHome = () => {
             </div>
           </>
           }
+
+ {console.log(data.nullGraph[0])}
+          {
+            noCompetitors &&
+            <div className="grid grid-cols-2 md:grid-cols-3 items-center justify-center justify-items-center content-center self-center place-items-center place-self-center justify-self-center" id="competitorGraph">
+            {data.nullGraph.map((entry, index) => (
+        <BarChart
+          key={index}
+          width={isMobile ? 170 : 200}
+          height={isMobile ? 200 : 300}
+          data={[entry]}
+          margin={{
+            top: 5,
+            right: 30,
+            left: 20,
+            bottom: 5
+          }}
+        >
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis stroke="#ffffff" dataKey="name" />
+          <YAxis />
+          <Tooltip />
+          <Bar dataKey="me" fill="#9894f8" />
+          <Bar dataKey="competitor" fill="#82ca9d" />
+        </BarChart>
+      ))}
+            </div>
+          }
           
          
           { !noCompetitors &&
