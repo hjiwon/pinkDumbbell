@@ -10,12 +10,26 @@ const Post = () => {
   const url = window.location.href;
   const contentid = url.split('/')[4];
   const [comment, setComment] = useState("");
+  // const { data, isLoading } = useQuery({
+  //   queryKey: ["post", contentid],
+  //   queryFn: async () => {
+  //     const res = await axios.get(`http://110.10.3.11:8090/community/${contentid}`);
+  //     return res.data.response
+  //   }
+  // })
+  // 위의 코드에서 토큰을 넣어서 요청을 보내야 한다.
   const { data, isLoading } = useQuery({
     queryKey: ["post", contentid],
     queryFn: async () => {
-      const res = await axios.get(`http://110.10.3.11:8090/community/${contentid}`);
+      const res = await axios.get(`http://110.10.3.11:8090/community/${contentid}`, {
+        headers: {
+          Authorization: localStorage.getItem("token")
+        }
+      });
+      
       return res.data.response
     }
+
   })
   console.log(data)
   const navigate = useNavigate();
