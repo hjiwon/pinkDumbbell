@@ -20,7 +20,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useQuery } from "@tanstack/react-query";
 import UnLoggedInHome from "./UnLoggedInHome";
-
+import { useNavigate } from "react-router-dom";
 import { useRecoilState } from "recoil";
 import { isLoggedInState } from "../atoms";
 
@@ -174,6 +174,7 @@ const LoggedInHome = () => {
       setExerciseModal(false);
     }
   }
+  const navigate = useNavigate();
   const handleProfileImageModalOutsideClick = (e) => {
     if(e.target === e.currentTarget) {
       setProfileImageModal(false);
@@ -227,7 +228,7 @@ const LoggedInHome = () => {
   }
 
   const deleteCompetitor = (competitorId) => {
-    // /home/{userId}/deleteCompetitor
+    // /home/{userId}/deleteCompetitor')
     axios.delete(`http://110.10.3.11:8090/home/${userid}/deleteCompetitor`, {
       data: {
         userId: userid,
@@ -236,6 +237,12 @@ const LoggedInHome = () => {
       headers: {
         Authorization: localStorage.getItem("token")
       }
+    })
+    .then((res) => {
+      toast.success("경쟁자가 삭제되었습니다!");
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000);
     })
   }
 
@@ -756,7 +763,7 @@ const LoggedInHome = () => {
               {
               competitor.userName ? 
               <div>
-                <button className="text-white break-keep" style={{width: hoveredIndex === index ? '100px' : '0px', opacity: hoveredIndex === index ? 1 : 0, transition: 'all 0.3s ease'}}>프로필 보기</button>
+                <button className="text-white break-keep" style={{width: hoveredIndex === index ? '100px' : '0px', opacity: hoveredIndex === index ? 1 : 0, transition: 'all 0.3s ease'}} onClick={() => navigate(`/profile/${competitor.userId}`)}>프로필 보기</button>
                 <button className="text-white break-keep" style={{width: hoveredIndex === index ? '100px' : '0px', opacity: hoveredIndex === index ? 1 : 0, transition: 'all 0.3s ease'}} onClick={() => deleteCompetitor(competitor.userId)}>삭제</button>
               </div> :
               <div>

@@ -57,8 +57,20 @@ const Community = () => {
   //동영상은 hover시 mute로 자동재생
   const handleVideoHover = (e) => {
     e.target.muted = true;
-    e.target.play();
-  }
+
+    const playPromise = e.target.play();
+    if (playPromise !== undefined) {
+      playPromise.then(_ => {
+        e.target.play();
+        e.target.muted = true;
+        console.log("autoplay started");
+      })
+      .catch(error => {
+        // Auto-play was prevented
+        // Show paused UI.
+      });
+    }
+}
   const handleVideoOut = (e) => {
     e.target.pause();
   }
@@ -75,7 +87,7 @@ const Community = () => {
           <img key={index} src={page.address} alt={page.contentType} className={`w-1/2 sm:w-1/3 aspect-square cursor-pointer `} onClick={() => handleImageClick(page.contentId)} />
           :
           <div key={index} className="w-1/2 sm:w-1/3 aspect-square cursor-pointer" onClick={() => handleImageClick(page.contentId)} onMouseEnter={handleVideoHover} onMouseLeave={handleVideoOut}>
-            <video src={page.address} className="w-full h-full" />
+            <video src={page.address} autoPlay="" muted="" playsInline="" className="w-full h-full" />
           </div>
         ))
       }
