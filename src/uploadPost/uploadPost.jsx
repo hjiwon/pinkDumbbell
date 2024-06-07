@@ -14,6 +14,7 @@ const UploadPost = () => {
   const [cropperHidden, setCropperHidden] = useState(false);
   const [videoSelected, setVideoSelected] = useState(false);
   const [videoDirectory, setVideoDirectory] = useState("");
+  const [buttonClickable, setButtonClickable] = useState(true);
   const cropperRef = useRef(null);
   const [privacy, setPrivacy] = useState("public");
   const [imageSelectedAndCropped, setImageSelectedAndCropped] = useState(false);
@@ -124,7 +125,7 @@ const UploadPost = () => {
     }
     formData.append("text", new Blob([JSON.stringify(textObj)], { type: "application/json" }));
 
-    console.log(fileName);
+    setButtonClickable(false);
 
     if (imageSelectedAndCropped) {
       const blob = base64ToBlob(uploadedImage);
@@ -150,10 +151,13 @@ const UploadPost = () => {
       }, 1000);
     })
     .catch((err) => {
-      toast.update(toastId, { render: "업로드 실패! 사진 형식은 jpg, jpeg, png만 가능합니다", type: "error", autoClose: 1000 });
+      toast.update(toastId, { render: "업로드 실패! 사진 형식은 jpg, jpeg, png만 가능합니다", type: "error", autoClose: 1500 });
+      setTimeout(() => {
+        window.location.reload();
+      }, 1500);
     });
   }
-
+// function that do nothing: ()
   return (
     <>
     <GNB />
@@ -253,7 +257,7 @@ const UploadPost = () => {
     <div className="w-full">
       <textarea placeholder="내용을 입력해주세요" className="w-full h-96 border-2 border-gray-300 p-4"></textarea>
     </div>
-    <button onClick={handleUploadClick} className="w-full h-14 bg-rose-500 text-white hover:bg-rose-600">업로드</button>
+    <button onClick={buttonClickable ? handleUploadClick : ()=>{}} className={`w-full h-14 bg-rose-500 text-white hover:bg-rose-600 ${buttonClickable ? '' : 'cursor-not-allowed'}`}>업로드</button>
   </div>
   <Footer />
   </>

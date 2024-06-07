@@ -106,6 +106,7 @@ const LoggedInHome = () => {
   const [userMuscleMass, setUserMusclemass] = useState("");
   const [userBodyFat, setUserBodyFat] = useState("");
   const [uploadedImage, setUploadedImage] = useState(null);
+  const [buttonClickable, setButtonClickable] = useState(true);
   const handleBodyModalInput = (e) => {
     // 숫자만 입력이 가능하도록 해야함
     if(isNaN(e.target.value) && e.target.value !== "") {
@@ -290,6 +291,7 @@ const LoggedInHome = () => {
     const exerciseRecordVideoName = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15) + ".mp4";
     console.log(exerciseRecordVideoName);
     const formData = new FormData();
+    setButtonClickable(false);
 
     if (videoSelected) {
       const videoBlob = base64ToBlob(videoForBlob);
@@ -361,6 +363,7 @@ const LoggedInHome = () => {
     }
     const id = toast.loading("경쟁자를 추가하는 중입니다...");
     console.log(parseInt(userid), competitorId)
+    setButtonClickable(false);
     axios.post(`http://110.10.3.11:8090/home/${userid}/addCompetitor`, {
       userId: parseInt(userid),
       competitorId: competitorId
@@ -896,7 +899,7 @@ const LoggedInHome = () => {
                   </div>
                 </div>
                 <div className="flex gap-2 items-end mb-3">
-                  <button className="text-rose-400 hover:text-rose-500 font-bold" onClick={() => handleCompetitorAdd(profile.userId)}>
+                  <button className="text-rose-400 hover:text-rose-500 font-bold" onClick={buttonClickable ? () => handleCompetitorAdd(profile.userId) : ()=>{}}>
                     경쟁
                   </button>
                 </div>
