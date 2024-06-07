@@ -597,7 +597,7 @@ const LoggedInHome = () => {
 
         {/* 그래프 */}
         
-        <div className="relative flex flex-col items-center justify-center w-full border border-top-white border-x-transparent gap-8 py-12">
+        <div className="relative flex flex-col items-center justify-center w-full border border-top-white border-x-transparent gap-8 py-12 sm:flex-row">
           { noCompetitors && 
           <>
             <div className="flex flex-col items-center justify-center gap-14 text-white text-xl mt-10">
