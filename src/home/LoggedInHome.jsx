@@ -226,6 +226,19 @@ const LoggedInHome = () => {
     setUserWeight("");
   }
 
+  const deleteCompetitor = (competitorId) => {
+    // /home/{userId}/deleteCompetitor
+    axios.delete(`http://110.10.3.11:8090/home/${userid}/deleteCompetitor`, {
+      data: {
+        userId: userid,
+        competitorId,
+      },
+      headers: {
+        Authorization: localStorage.getItem("token")
+      }
+    })
+  }
+
   const handleBodyModify = () => {
     ///user/{userId}/modify
     console.log(`http://110.10.3.11:8090/user/${userid}/modify`)
@@ -340,14 +353,26 @@ const LoggedInHome = () => {
       return;
     }
     const id = toast.loading("경쟁자를 추가하는 중입니다...");
-    axios.post(`http://110.10.3.11:8090/home/${competitorId}/addCompetitor`)
+    console.log(parseInt(userid), competitorId)
+    axios.post(`http://110.10.3.11:8090/home/${userid}/addCompetitor`, {
+      userId: parseInt(userid),
+      competitorId: competitorId
+    },
+    {
+      headers: {
+        Authorization: localStorage.getItem("token")
+      }
+    })
     .then((res) => {
       toast.update(id, { type: "success", render: "경쟁자가 추가되었습니다!", isLoading: false, autoClose: 2000 });
     })
     .then(() => {
       refetch();
+      // 새로고침
+      window.location.reload();
     })
     .catch((err) => {
+      console.log(err);
       toast.update(id, { type: "error", render: "경쟁자 추가에 실패했습니다!", isLoading: false, autoClose: 2000 });
     });
   }  
@@ -732,7 +757,7 @@ const LoggedInHome = () => {
               competitor.userName ? 
               <div>
                 <button className="text-white break-keep" style={{width: hoveredIndex === index ? '100px' : '0px', opacity: hoveredIndex === index ? 1 : 0, transition: 'all 0.3s ease'}}>프로필 보기</button>
-                <button className="text-white break-keep" style={{width: hoveredIndex === index ? '100px' : '0px', opacity: hoveredIndex === index ? 1 : 0, transition: 'all 0.3s ease'}}>삭제</button>
+                <button className="text-white break-keep" style={{width: hoveredIndex === index ? '100px' : '0px', opacity: hoveredIndex === index ? 1 : 0, transition: 'all 0.3s ease'}} onClick={() => deleteCompetitor(competitor.userId)}>삭제</button>
               </div> :
               <div>
                 <button className="text-white break-keep" style={{width: hoveredIndex === index ? '100px' : '0px', opacity: hoveredIndex === index ? 1 : 0, transition: 'all 0.3s ease'}}>경쟁자 없음</button>
@@ -854,7 +879,7 @@ const LoggedInHome = () => {
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-white" id="recommendedProfile">
           {data.recommendedUsers.map((profile, index) => (
             <div key={index} className="max-w-sm my-20 border p-4 rounded-md">
-              <img className="w-full rounded" src={profile.userProfile} alt="post" />
+              <img className="w-full rounded" src={profile.userProfile ? profile.userProfile : "images/profile-simple.svg"} alt="post" />
               
               <div className="flex items-end justify-between">
                 <div className="py-4">

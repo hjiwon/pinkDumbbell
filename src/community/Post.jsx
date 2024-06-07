@@ -29,6 +29,7 @@ const Post = () => {
       return false;
     }
   }
+  console.log(localStorage.getItem("token"))
   const postComment = async (comment) => {
     const url = `http://110.10.3.11:8090/community/${contentid}/comment`
     axios.post(url, {
@@ -68,7 +69,7 @@ const Post = () => {
         </div>
       </div>
       <div className="border-2 border-gray-300 p-4 my-4 rounded-md flex">
-        <img src={data?.profileImage || '/images/profile-simple.svg'} alt="profile" className="w-[3rem] mx-auto rounded-full" />
+        <img src={data?.connectedUserProfile || '/images/profile-simple.svg'} alt="profile" className="w-[3rem] mx-auto rounded-full" />
         <input type="text" className="w-3/5 mx-auto" placeholder="댓글을 입력해주세요" onChange={(e) => setComment(e.target.value)} />
         <button className="w-1/5 mx-auto bg-rose-500 hover:bg-rose-600 text-white rounded-md p-2 mt-2" onClick={() => postComment(comment)}>작성</button>
       </div>

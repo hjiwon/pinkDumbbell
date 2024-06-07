@@ -150,8 +150,7 @@ const UploadPost = () => {
       }, 1000);
     })
     .catch((err) => {
-      toast.update(toastId, { render: "업로드 실패!", type: "error", autoClose: 1000 });
-      console.error(err.response.data.error.message);
+      toast.update(toastId, { render: "업로드 실패! 사진 형식은 jpg, jpeg, png만 가능합니다", type: "error", autoClose: 1000 });
     });
   }
 
