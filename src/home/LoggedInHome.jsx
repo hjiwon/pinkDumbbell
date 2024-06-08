@@ -254,8 +254,7 @@ const LoggedInHome = () => {
 
   const handleBodyModify = () => {
     ///user/{userId}/modify
-    console.log(`http://110.10.3.11:8090/user/${userid}/modify`)
-    console.log(userHeight, userWeight, userMuscleMass, userBodyFat);
+    setButtonClickable(false);
     axios.post(`http://110.10.3.11:8090/user/${userid}/modify`, {
       height: userHeight,
       weight: userWeight,
@@ -276,6 +275,7 @@ const LoggedInHome = () => {
       setUserHeight("");
       setUserMusclemass("");
       setUserWeight("");
+      setButtonClickable(true);
     })
     .then(() => {
       refetch();
@@ -306,6 +306,8 @@ const LoggedInHome = () => {
     formData.append("exercise", new Blob([JSON.stringify(exercise)], { type: "application/json" }));
     const toastId = toast.loading("운동 기록을 업로드 중입니다...");
     const token = localStorage.getItem("token");
+
+    setButtonClickable(false);
 
     axios.post(`http://110.10.3.11:8090/user/${userid}/record`, formData, {
       headers: {
@@ -521,7 +523,7 @@ const LoggedInHome = () => {
           
           <div className="flex w-full items-center justify-center">
             <button onClick={handleModalCancel} className={`w-1/2 h-14 bg-gray-500 text-white hover:bg-gray-600 ${!cropperHidden ? 'hidden' : ''}`}>취소</button>
-            <button className={`w-1/2 h-14 bg-rose-500 text-white hover:bg-rose-600 ${!cropperHidden ? 'hidden' : ''}`} onClick={handleBodyModify}>전송</button>
+            <button className={`w-1/2 h-14 bg-rose-500 text-white hover:bg-rose-600 ${!cropperHidden ? 'hidden' : ''}`} onClick={buttonClickable ? handleBodyModify : ()=>{}}>전송</button>
           </div>
         </div>
       </div>}
@@ -555,7 +557,7 @@ const LoggedInHome = () => {
           
           <div className="flex w-full items-center justify-center">
             <button onClick={handleModalCancel} className={`w-1/2 h-14 bg-gray-500 text-white hover:bg-gray-600`}>취소</button>
-            <button onClick={handleExerciseRecord} className={`w-1/2 h-14 bg-rose-500 text-white hover:bg-rose-600`}>전송</button>
+            <button onClick={buttonClickable ? handleExerciseRecord : ()=>{}} className={`w-1/2 h-14 bg-rose-500 text-white hover:bg-rose-600`}>전송</button>
           </div>
         </div>
       </div>}
@@ -886,12 +888,12 @@ const LoggedInHome = () => {
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-white" id="recommendedProfile">
           {data.recommendedUsers.map((profile, index) => (
             <div key={index} className="max-w-sm my-20 border p-4 rounded-md">
-              <img className="w-full rounded" src={profile.profile ? profile.profile : "images/profile-simple.svg"} alt="post" />
+              <img className="w-full rounded cursor-pointer" src={profile.profile ? profile.profile : "images/profile-simple.svg"} onClick={() => navigate(`/profile/${profile.userId}`)} alt="post" />
               
               <div className="flex items-end justify-between">
                 <div className="py-4">
                   <div>
-                    <div className="font-bold text-xl">{profile.name}</div>
+                    <div className="font-bold text-xl cursor-pointer" onClick={() => navigate(`/profile/${profile.userId}`)}>{profile.name}</div>
                     <div>{profile.height}cm {profile.weight}kg</div>
                   </div>
                 </div>

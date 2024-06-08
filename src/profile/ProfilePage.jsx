@@ -89,8 +89,8 @@ const Profile = () => {
   return (
     <>
       <GNB />
-      <div className="flex justify-center items-center w-full h-40 bg-gray-200">
-        {data.data && data.data.profileImage && <img src={data.data.profileImage} alt="프로필 이미지" className="w-20 h-20 rounded-full" />}
+      <div className="flex justify-center items-center w-full h-60 bg-gray-200">
+        {data.data && data.data.profileImage && <img src={data.data.profileImage} alt="프로필 이미지" className="w-48 h-48 rounded-full" />}
         {data.data && !data.data.profileImage && <div className="w-20 h-20 rounded-full bg-gray-300"> <img src="/images/profile-simple.svg" alt="" className="opacity-50" /> </div>}
       </div>
       { data.data && data.data.userId != myUserid &&
