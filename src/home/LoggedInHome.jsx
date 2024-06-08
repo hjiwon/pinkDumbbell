@@ -41,6 +41,9 @@ import { isLoggedInState } from "../atoms";
               average: 80,
             }
           ];
+  //         axios.post(`http://110.10.3.11:8090/user/dummy`).then((res) => {
+  //   console.log(res);
+  // });
 
 const LoggedInHome = () => { 
   const [videoSelected, setVideoSelected] = useState(false);
@@ -58,6 +61,8 @@ const LoggedInHome = () => {
     const targetedVideo = e.target.files[0];
     setVideoDirectory(URL.createObjectURL(targetedVideo));
   }
+
+  
 
   const base64ToBlob = (base64) => {
     const [metadata, base64Data] = base64.split(',');
@@ -527,20 +532,12 @@ const LoggedInHome = () => {
           <span className="text-gray-400">여기서 1RM이란, 1회에 최대로 들 수 있는 무게를 말해요</span>
           <div className="flex flex-col items-center gap-2 w-2/3">
             <select name="exercise" id="exercise" className="w-full border border-gray-300 rounded-md p-3" onChange={handleExerciseNameChange}>
-              <option value="benchPress">벤치프레스</option>
-              <option value="squat">스쿼트</option>
-              <option value="deadlift">데드리프트</option>
-              <option value="shoulderPress">숄더프레스</option>
-              <option value="pullUp">풀업</option>
-              <option value="dip">딥</option>
-              <option value="bicepCurl">바벨컬</option>
-              <option value="tricepExtension">트라이셉익스텐션</option>
-              <option value="legPress">레그프레스</option>
-              <option value="legCurl">레그컬</option>
-              <option value="legExtension">레그익스텐션</option>
-              <option value="calfRaise">카프레이즈</option>
-              <option value="crunch">크런치</option>
-              <option value="legRaise">레그레이즈</option>
+              <option value="벤치프레스">벤치프레스</option>
+              <option value="스쿼트">스쿼트</option>
+              <option value="데드리프트">데드리프트</option>
+              <option value="숄더프레스">숄더프레스</option>
+              <option value="덤벨컬">덤벨컬</option>
+              <option value="바벨컬">바벨컬</option>
             </select>
             <input type="text" placeholder="운동 기록(kg)" className="w-full h-10 border border-gray-300 rounded-md p-3" onChange={handleExerciseModalInput} value={exercise.record} name="exercise"/>
           </div>
@@ -762,7 +759,7 @@ const LoggedInHome = () => {
 
           {data.competitors.map((competitor, index) => (
             <div key={index} className="flex items-center">
-              <img onClick={() => {handleCompetitorClick(index); handleMouseEnter(index)}} className="rounded-md w-20 bg-white" src={`${competitor.userProfile}`} alt="경쟁프로필" onMouseEnter={() => handleMouseEnter(index)} style={{height: hoveredIndex === index ? '200px' : '100px', transition: 'height 0.3s ease', width: hoveredIndex === index ? '200px' : '100px'}}/>
+              <img onClick={() => {handleCompetitorClick(index); handleMouseEnter(index)}} className="rounded-md w-20 bg-white" src={competitor.userProfile ? competitor.userProfile : 'images/profile-simple.svg'} alt="경쟁프로필" onMouseEnter={() => handleMouseEnter(index)} style={{height: hoveredIndex === index ? '200px' : '100px', transition: 'height 0.3s ease', width: hoveredIndex === index ? '200px' : '100px'}}/>
               {
               competitor.userName ? 
               <div>
@@ -823,7 +820,7 @@ const LoggedInHome = () => {
               {data.userRecords[0]?.record}
             </div>
             <div className="h-1/3 flex items-center">
-              상위 {data.userRecords[1]?.percentage}
+              상위 {data.userRecords[0]?.percentage}
             </div>
           </div>
 

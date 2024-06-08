@@ -72,7 +72,9 @@ const Post = () => {
             )
           }
           <div className="px-4 pt-4 mt-4 rounded-md flex items-end">
-            <img src={data?.profileImage || '/images/profile-simple.svg'} alt="profile" className="w-1/6 mx-auto rounded-full" onClick={() => handleUserClick(data?.userId)} />
+            <button onClick={() => handleUserClick(data?.userId)} className="w-1/6 mx-auto">
+            <img src={data?.profileImage || '/images/profile-simple.svg'} alt="profile" className="rounded-full" onClick={() => handleUserClick(data?.userId)} />
+            </button>
             <p className="w-full text-end">{data?.text}</p>
           </div>
         </div>
@@ -84,7 +86,9 @@ const Post = () => {
         {
           data?.comments?.map((comment, index) => (
             <div key={index} className="border-2 border-gray-300 p-4 my-4 rounded-md flex items-end">
+              <button onClick={() => handleUserClick(comment.userId)}>
               <img src={comment.profileImage || '/images/profile-simple.svg'} alt="profile" className="w-[3rem] mx-auto rounded-full" onClick={() => handleUserClick(comment.userId)} />
+              </button>
               <p className="w-full text-end">{comment.comment}</p>
             </div>
           ))
