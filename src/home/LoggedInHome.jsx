@@ -886,7 +886,7 @@ const LoggedInHome = () => {
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-white" id="recommendedProfile">
           {data.recommendedUsers.map((profile, index) => (
             <div key={index} className="max-w-sm my-20 border p-4 rounded-md">
-              <img className="w-full rounded" src={profile.userProfile ? profile.userProfile : "images/profile-simple.svg"} alt="post" />
+              <img className="w-full rounded" src={profile.profile ? profile.profile : "images/profile-simple.svg"} alt="post" />
               
               <div className="flex items-end justify-between">
                 <div className="py-4">

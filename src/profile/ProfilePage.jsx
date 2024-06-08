@@ -29,10 +29,13 @@ const Profile = () => {
   const compete = async (competitorId) => {
     const id = toast.loading("전송중입니다...");
     const url = `http://110.10.3.11:8090/home/${userid}/addCompetitor`
-    const res = axios.get(url)
     await axios.post(url, {
       userId: myUserid,
       competitorId, 
+    }, {
+      headers: {
+        Authorization: localStorage.getItem("token")
+      }
     })
     .then(res => {
       toast.update(id, {
