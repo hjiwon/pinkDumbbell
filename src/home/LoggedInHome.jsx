@@ -253,9 +253,10 @@ const LoggedInHome = () => {
     })
     .then((res) => {
       toast.success("경쟁자가 삭제되었습니다!");
-      setTimeout(() => {
-        window.location.reload();
-      }, 1000);
+    })
+    .then(() => {
+      refetch();
+      setButtonClickable(true);
     })
   }
 
@@ -286,6 +287,7 @@ const LoggedInHome = () => {
     })
     .then(() => {
       refetch();
+      setButtonClickable(true);
     })
     .catch((err) => {
       console.log(err);
@@ -332,12 +334,15 @@ const LoggedInHome = () => {
       })
     })
     .then(() => {
-      window.location.reload();
       handleModalCancel();
+      setTimeout(() => {
+        refetch();
+        setButtonClickable(true);
+      }, 2000);
     })
     .catch((err) => {
       console.log(err);
-      window.location.reload();
+      setButtonClickable(true);
       handleModalCancel();
       toast.update(toastId, { type: "error", render: "운동 기록 업로드에 실패했습니다!", isLoading: false, autoClose: 2000 });
     });
@@ -367,10 +372,12 @@ const LoggedInHome = () => {
     })
     .then(() => {
       refetch();
+      setButtonClickable(true);
     })
     .catch((err) => {
       toast.update(toastId, { type: "error", render: "프로필 사진 업로드에 실패했습니다!", isLoading: false, autoClose: 2000 });
       console.log(err);
+      setButtonClickable(true);
     });
   }
   const handleCompetitorAdd = (competitorId) => {
@@ -397,8 +404,7 @@ const LoggedInHome = () => {
     })
     .then(() => {
       refetch();
-      // 새로고침
-      window.location.reload();
+      setButtonClickable(true);
     })
     .catch((err) => {
       console.log(err);
@@ -565,7 +571,7 @@ const LoggedInHome = () => {
           <span className="text-gray-400">인증 영상도 함께 업로드해주세요!</span>
           {
             videoSelected &&
-            <video src={videoDirectory} autoPlay={true} className="w-1/3 h-[10rem]"/>
+            <video src={videoDirectory} className="w-1/3 h-[10rem]" />
           }
           <div className={`flex gap-4 w-full items-center justify-center ${videoSelected ? 'hidden' : ''}`}>
             <input type="file" id="file2" className="hidden" accept="video/*" onChange={handleVideoSelected}/>
@@ -833,7 +839,7 @@ const LoggedInHome = () => {
           <div className="flex gap-4 w-full justify-center items-center">
             <button onClick={() => carouselClick(videoIndex - 1)} className={`text-white text-4xl ${videoIndex === 0 ? 'cursor-not-allowed opacity-30' : ''}`}>{"<"}</button>
             <div className="w-full h-[40rem]">
-              <video src={data.contents[videoIndex]?.address} controls className="w-full h-full" autoPlay={true} muted={true}/>
+              <video src={data.contents[videoIndex]?.address} controls className="w-full h-full" autoPlay={true} muted={true} playsInline={true} />
             </div>
             <button onClick={() => carouselClick(videoIndex + 1)} className={`text-white text-4xl ${videoIndex === data?.contents.length - 1 ? 'cursor-not-allowed opacity-30' : ''}`}>{">"}</button>
           </div>

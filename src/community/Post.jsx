@@ -9,6 +9,12 @@ const Post = () => {
   const url = window.location.href;
   const contentid = url.split('/')[4];
   const [comment, setComment] = useState("");
+  // token이 없을 경우 로그인 페이지로 이동
+  const navigate = useNavigate();
+  if (!localStorage.getItem("token")) {
+    navigate("/login");
+    console.log("로그인이 필요합니다.");
+  }
   const { data, isLoading } = useQuery({
     queryKey: ["post", contentid],
     queryFn: async () => {
@@ -19,11 +25,11 @@ const Post = () => {
       });
       
       return res.data.response
-    }
+    },
+    retry: 0
   });
   
   const videoRef = useRef(null);
-  const navigate = useNavigate();
   console.log(data)
   
   useEffect(() => {
@@ -67,7 +73,7 @@ const Post = () => {
         <div className="border-2 border-gray-300 p-4 my-4 rounded-md">
           {
             data && checkIfVideo(data?.content) ? (
-              <video ref={videoRef} src={data?.content} controls className="w-full mx-auto"></video>
+              <video ref={videoRef} src={data?.content} controls className="w-full mx-auto" playsInline />
             ) : (
               <img src={data?.content} alt="content" className="w-full mx-auto" />
             )

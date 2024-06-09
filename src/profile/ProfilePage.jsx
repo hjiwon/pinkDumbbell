@@ -25,7 +25,6 @@ const Profile = () => {
     keepPreviousData: true,
     retry: 0,
   })
-  console.log(data)
 
   const compete = async (competitorId) => {
     const id = toast.loading("전송중입니다...");
@@ -48,12 +47,22 @@ const Profile = () => {
     })
     .catch(err => {
       console.error(err)
-      toast.update(id, {
-        render: "경쟁자 등록 실패",
-        type: "error",
-        isLoading: false,
-        autoClose: 2000,
-      })
+      if (localStorage.getItem("token") === null) {
+        toast.update(id, {
+          render: "로그인이 필요합니다.",
+          type: "error",
+          isLoading: false,
+          autoClose: 2000,
+        })
+      }
+      else {
+        toast.update(id, {
+          render: "경쟁자 등록 실패",
+          type: "error",
+          isLoading: false,
+          autoClose: 2000,
+        })
+      }
     })
   }
   
@@ -62,7 +71,6 @@ const Profile = () => {
   if (isLoading) {
     return <div>Loading...</div>
   }
-  console.log(data.data.userExerciseRecords)
   const carouselClick = (index) => {
     console.log(index, data?.data.userExerciseRecords.length -1)
     if (index === -1 || index === data?.data.userExerciseRecords.length ) {
@@ -126,7 +134,7 @@ const Profile = () => {
           {data?.data.userExerciseRecords[videoIndex]?.video &&
           <>
             <div className="w-full h-[30rem]">
-              <video src={data?.data.userExerciseRecords[videoIndex]?.video} controls className="w-full h-full" autoPlay={true} muted={true}/>
+              <video src={data?.data.userExerciseRecords[videoIndex]?.video} controls className="w-full h-full" autoPlay={true} muted={true} playsInline={true} />
             </div>
           </>
           }

@@ -6,7 +6,7 @@ const Footer = () => {
       </div>
       <div className="flex w-full max-w-screen-lg p-4 justify-between h-18 justify-center items-center text-white">
         <div>Copyright ⓒ 2023 Pink Dumbbell Inc.</div>
-        <div className="flex gap-6 underline">
+        <div className="flex gap-6 underline text-sm md:text-base">
           <div>개인정보처리방침</div>
           <div>이용약관</div>
         </div>

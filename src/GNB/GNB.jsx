@@ -9,6 +9,7 @@ const GNB = () => {
   const handleLogoutClick = () => {
     setIsLoggedIn(false);
     localStorage.removeItem('loggedIn');
+    localStorage.removeItem('token');
     navigate('/');
   }
   const userid = localStorage.getItem('userid');

@@ -6,6 +6,7 @@ import "cropperjs/dist/cropper.css";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const UploadPost = () => {
   const [uploadedImage, setUploadedImage] = useState("");
@@ -21,6 +22,12 @@ const UploadPost = () => {
   const [videoForBlob, setVideoForBlob] = useState(null);
 
   const [profileImageModal, setProfileImageModal] = useState(false);
+
+  const navigate = useNavigate();
+  if (!localStorage.getItem("token")) {
+    navigate("/login");
+    alert("로그인이 필요합니다.");
+  }
 
   const handleProfileImage = () => {
     if (uploadedImage) {
@@ -232,7 +239,7 @@ const UploadPost = () => {
       }
       {
         videoSelected &&
-        <video src={videoDirectory} autoPlay ></video>
+        <video src={videoDirectory} autoPlay muted playsInline /> 
       }
       {
         !imageSelectedAndCropped && !videoSelected &&
