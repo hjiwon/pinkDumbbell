@@ -64,7 +64,8 @@ const Profile = () => {
   }
   console.log(data.data.userExerciseRecords)
   const carouselClick = (index) => {
-    if (index === -1 || index === data?.userExerciseRecords?.length) {
+    console.log(index, data?.data.userExerciseRecords.length -1)
+    if (index === -1 || index === data?.data.userExerciseRecords.length ) {
       return;
     }
     setVideoIndex(index);
@@ -111,7 +112,9 @@ const Profile = () => {
 { data?.data && data?.data.userId == myUserid &&
                 <button onClick={() => navigate("/upload")} className="w-full h-16 bg-rose-500 hover:bg-rose-600 font-bold text-white text-lg">업로드 하러가기</button>
               }
-
+      {
+        data.data && data.data.userExerciseRecords.length !== 0 &&
+        <>
         <div className="border border-b-transparent border-x-transparent flex flex-col items-center mt-16 w-full py-4 text-white text-2xl relative ">
             {data.data && data.data.userName} 님의 운동 기록
         </div>
@@ -128,18 +131,20 @@ const Profile = () => {
           </>
           }
           {
-            data?.data.userExerciseRecords[videoIndex]?.video === null &&
+            data?.data.userExerciseRecords === null &&
             <div className="w-full h-[30rem] flex justify-center items-center">
               <h1 className="text-white text-4xl font-bold">인증 영상이 없습니다.</h1>
             </div>
           }
-            <button onClick={() => carouselClick(videoIndex + 1)} className={`text-white text-4xl ${videoIndex === data?.data.userExerciseRecords.length - 1 ? 'cursor-not-allowed opacity-30' : ''}`}>{">"}</button>
+            <button onClick={() => carouselClick(videoIndex + 1)} className={`text-white text-4xl ${videoIndex === data?.data?.userExerciseRecords?.length - 1 ? 'cursor-not-allowed opacity-30' : ''}`}>{">"}</button>
 
             </div>
         </div>
         <div className="border border-t-transparent border-x-transparent flex flex-col items-center mb-16 w-full py-4 text-white text-2xl relative ">
-          {data.data && data.data.userExerciseRecords[videoIndex].exerciseName} {data.data && data.data.userExerciseRecords[videoIndex].record}을 성공했어요!
+          {data.data && data.data.userExerciseRecords[videoIndex]?.exerciseName} {data.data && data.data.userExerciseRecords[videoIndex]?.record}을 성공했어요!
         </div>
+        </>
+}
 
 
         <div className="border border-b-transparent border-x-transparent flex flex-col items-center mt-16 w-full py-4 text-white text-2xl relative ">
@@ -157,7 +162,7 @@ const Profile = () => {
         ))}
         {
           data.data && data.data.userContents.length === 0 && (
-            <div className="w-full h-40 flex justify-center items-center flex-col justify-between mt-24">
+            <div className="w-full h-40 flex justify-center items-center flex-col justify-between mt-24 font-bold text-2xl text-white">
               <h1>게시물이 없습니다.</h1>
             </div>
           )

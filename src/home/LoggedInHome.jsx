@@ -178,6 +178,9 @@ const LoggedInHome = () => {
   const handleExerciseModalOutsideClick = (e) => {
     if(e.target === e.currentTarget) {
       setExerciseModal(false);
+      setVideoSelected(false);
+      setVideoDirectory("");
+      setVideoName("");
     }
   }
   const navigate = useNavigate();
@@ -232,6 +235,9 @@ const LoggedInHome = () => {
     setUserHeight("");
     setUserMusclemass("");
     setUserWeight("");
+    setVideoSelected(false);
+    setVideoDirectory("");
+    setVideoName("");
   }
 
   const deleteCompetitor = (competitorId) => {
@@ -295,13 +301,14 @@ const LoggedInHome = () => {
     }
     // make random name
     const exerciseRecordVideoName = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15) + ".mp4";
-    console.log(exerciseRecordVideoName);
     const formData = new FormData();
     setButtonClickable(false);
 
+    console.log(videoSelected);
+
     if (videoSelected) {
       const videoBlob = base64ToBlob(videoForBlob);
-      formData.append("video", videoBlob, exerciseRecordVideoName);
+      formData.append("exerciseVideo", videoBlob, exerciseRecordVideoName);
     }
     exercise.record = exercise.record.toString() + "kg";
     formData.append("exercise", new Blob([JSON.stringify(exercise)], { type: "application/json" }));
@@ -317,6 +324,7 @@ const LoggedInHome = () => {
       }
     })
     .then((res) => {
+      console.log(res);
       toast.update(toastId, { type: "success", render: "운동 기록이 업로드되었습니다!", isLoading: false, autoClose: 2000 });
       setExercise({
           exerciseName: "benchPress",
@@ -324,10 +332,13 @@ const LoggedInHome = () => {
       })
     })
     .then(() => {
-      window.location.reload();
+      refetch();
+      handleModalCancel();
     })
     .catch((err) => {
       console.log(err);
+      refetch();
+      handleModalCancel();
       toast.update(toastId, { type: "error", render: "운동 기록 업로드에 실패했습니다!", isLoading: false, autoClose: 2000 });
     });
 };
@@ -355,7 +366,7 @@ const LoggedInHome = () => {
       setImageSelected(false);
     })
     .then(() => {
-      window.location.reload();
+      refetch();
     })
     .catch((err) => {
       toast.update(toastId, { type: "error", render: "프로필 사진 업로드에 실패했습니다!", isLoading: false, autoClose: 2000 });
