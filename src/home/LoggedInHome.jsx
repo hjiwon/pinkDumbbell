@@ -26,7 +26,7 @@ import { isLoggedInState } from "../atoms";
 
           const data2 = [
             {
-              name: '다른 사용자들과',
+              name: '사용자들과',
               me: 120,
               average: 40,
             },
@@ -209,6 +209,7 @@ const LoggedInHome = () => {
   }
   const [cropperHidden, setCropperHidden] = useState(true);
   const [imageSelected, setImageSelected] = useState(false);
+  const [videoIndex, setVideoIndex] = useState(0);
   const endCrop = () => {
     const imageElement = cropperRef?.current?.cropper;
     const canvas = imageElement.getCroppedCanvas();
@@ -403,6 +404,12 @@ const LoggedInHome = () => {
   }, [])
 
   if(isLoading) return <div>Loading...</div>;
+  const carouselClick = (index) => {
+    if (index === -1 || index === data?.contents.length) {
+      return;
+    }
+    setVideoIndex(index);
+  }
 
   if(!data) {
     return (
@@ -547,7 +554,7 @@ const LoggedInHome = () => {
           <span className="text-gray-400">인증 영상도 함께 업로드해주세요!</span>
           {
             videoSelected &&
-            <video src={videoDirectory} autoPlay={true} className="w-1/2 h-1/2"/>
+            <video src={videoDirectory} autoPlay={true} className="w-1/3 h-[10rem]"/>
           }
           <div className={`flex gap-4 w-full items-center justify-center ${videoSelected ? 'hidden' : ''}`}>
             <input type="file" id="file2" className="hidden" accept="video/*" onChange={handleVideoSelected}/>
@@ -806,6 +813,22 @@ const LoggedInHome = () => {
             </LineChart>
           </ResponsiveContainer>
         </div>
+
+        {/* contents에 있는 영상 보여주는 캐러셀 슬라이더 */}
+        <div className="border border-b-transparent flex flex-col items-center mt-16 w-full py-4 text-white text-2xl relative ">
+            추천 영상
+        </div>
+        <div className="flex flex-col items-center w-full">
+          <div className="flex gap-4 w-full justify-center items-center">
+            <button onClick={() => carouselClick(videoIndex - 1)} className={`text-white text-4xl ${videoIndex === 0 ? 'cursor-not-allowed opacity-30' : ''}`}>{"<"}</button>
+            <div className="w-full h-[40rem]">
+              <video src={data.contents[videoIndex]?.address} controls className="w-full h-full" autoPlay={true} muted={true}/>
+            </div>
+            <button onClick={() => carouselClick(videoIndex + 1)} className={`text-white text-4xl ${videoIndex === data?.contents.length - 1 ? 'cursor-not-allowed opacity-30' : ''}`}>{">"}</button>
+          </div>
+        </div>
+        
+
 
         {/* 운동 기록 */}
 

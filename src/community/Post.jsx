@@ -24,6 +24,7 @@ const Post = () => {
   
   const videoRef = useRef(null);
   const navigate = useNavigate();
+  console.log(data)
   
   useEffect(() => {
     if (videoRef.current) {
@@ -62,7 +63,7 @@ const Post = () => {
   return (
     <>
       <GNB />
-      <div className="w-1/2 mx-auto my-16">
+      <div className="w-5/6 md:w-1/2 mx-auto my-16">
         <div className="border-2 border-gray-300 p-4 my-4 rounded-md">
           {
             data && checkIfVideo(data?.content) ? (

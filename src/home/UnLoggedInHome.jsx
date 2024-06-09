@@ -6,10 +6,10 @@ const UnLoggedInHome = () => {
     <>
       <div className="w-full h-full flex justify-center bg-cover bg-[url('../public/images/landing-main-background.jpg')]">
         <div className="w-full max-w-screen-lg h-[42rem] relative flex items-center">
-          <div className="absolute top-20 left-10 font-bold text-white text-6xl">
+          <div className="absolute top-20 left-10 font-bold text-white text-4xl md:text-4xl md:text-6xl">
             남들과 비교하며
           </div>
-          <div className="absolute top-40 left-10 font-bold text-white text-6xl">
+          <div className="absolute top-40 left-10 font-bold text-white text-4xl md:text-4xl md:text-6xl">
             성장해가는 운동 실력
           </div>
 
@@ -23,7 +23,7 @@ const UnLoggedInHome = () => {
             직접 확인해보세요
           </div>
 
-          <Link to="/login" className="hover:bg-rose-500 text-2xl font-bold w-2/5 h-16 bg-rose-400 absolute bottom-20 rounded-lg left-10 flex items-center justify-center">
+          <Link to="/login" className="hover:bg-rose-500 text-xl md:text-2xl font-bold w-2/5 h-16 bg-rose-400 absolute bottom-20 rounded-lg left-10 flex items-center justify-center">
             운동 실력 비교하기
           </Link>
         </div>
@@ -31,11 +31,11 @@ const UnLoggedInHome = () => {
 
       <div className="w-full h-full flex justify-center bg-cover bg-zinc-800">
         <div className="w-full max-w-screen-lg h-[42rem] relative flex items-center">
-          <img className="absolute w-1/2 h-3/4" src="images/powerlifting.png" alt="" />
-          <div className="absolute top-20 right-10 font-bold text-white text-6xl">
+          <img className="absolute w-48 h-48 md:w-1/2 md:h-3/4" src="images/powerlifting.png" alt="" />
+          <div className="absolute top-20 right-10 font-bold text-white text-4xl md:text-6xl">
             자세 교정부터
           </div>
-          <div className="absolute top-40 right-10 font-bold text-white text-6xl">
+          <div className="absolute top-40 right-10 font-bold text-white text-4xl md:text-6xl">
             객관적인 순위까지
           </div>
 
@@ -46,11 +46,16 @@ const UnLoggedInHome = () => {
           다른 사용자에게 피드백을 받아보세요
           </div>
           <div className="absolute top-[25rem] right-10 text-white text-xl">
-          다른 사용자들과 소통해가며 빠른 성장을 경험해보세요.
+          다른 사용자들과 소통해보세요.
           </div>
           <div className="absolute top-[27rem] right-10 text-white text-xl">
             부상 없는 빠른 성장을 이룰 수 있어요.
           </div>
+
+
+          <Link to="/login" className="hover:bg-rose-500 text-xl md:text-2xl font-bold w-2/5 h-16 bg-rose-400 absolute bottom-20 rounded-lg right-10 flex items-center justify-center">
+            운동 실력 비교하기
+          </Link>
         </div>
       </div>
     </>
