@@ -332,12 +332,12 @@ const LoggedInHome = () => {
       })
     })
     .then(() => {
-      refetch();
+      window.location.reload();
       handleModalCancel();
     })
     .catch((err) => {
       console.log(err);
-      refetch();
+      window.location.reload();
       handleModalCancel();
       toast.update(toastId, { type: "error", render: "운동 기록 업로드에 실패했습니다!", isLoading: false, autoClose: 2000 });
     });
