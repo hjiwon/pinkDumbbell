@@ -837,11 +837,11 @@ const LoggedInHome = () => {
         </div>
         <div className="flex flex-col items-center w-full">
           <div className="flex gap-4 w-full justify-center items-center">
-            <button onClick={() => carouselClick(videoIndex - 1)} className={`text-white text-4xl ${videoIndex === 0 ? 'cursor-not-allowed opacity-30' : ''}`}>{"<"}</button>
+            <button onClick={() => carouselClick(videoIndex - 1)} className={`text-white text-6xl ${videoIndex === 0 ? 'cursor-not-allowed opacity-30' : ''}`}>{"<"}</button>
             <div className="w-full h-[40rem]">
               <video src={data.contents[videoIndex]?.address} controls className="w-full h-full" autoPlay={true} muted={true} playsInline={true} />
             </div>
-            <button onClick={() => carouselClick(videoIndex + 1)} className={`text-white text-4xl ${videoIndex === data?.contents.length - 1 ? 'cursor-not-allowed opacity-30' : ''}`}>{">"}</button>
+            <button onClick={() => carouselClick(videoIndex + 1)} className={`text-white text-6xl ${videoIndex === data?.contents.length - 1 ? 'cursor-not-allowed opacity-30' : ''}`}>{">"}</button>
           </div>
         </div>
         

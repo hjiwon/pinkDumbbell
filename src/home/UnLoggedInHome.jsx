@@ -6,7 +6,7 @@ const UnLoggedInHome = () => {
     <>
       <div className="w-full h-full flex justify-center bg-cover bg-[url('../public/images/landing-main-background.jpg')]">
         <div className="w-full max-w-screen-lg h-[42rem] relative flex items-center">
-          <div className="absolute top-20 left-10 font-bold text-white text-4xl md:text-4xl md:text-6xl">
+          <div className="absolute top-20 left-10 font-bold text-white text-4xl text-4xl md:text-6xl">
             남들과 비교하며
           </div>
           <div className="absolute top-40 left-10 font-bold text-white text-4xl md:text-4xl md:text-6xl">

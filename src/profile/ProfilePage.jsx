@@ -129,7 +129,7 @@ const Profile = () => {
         
         <div className="flex flex-col items-center w-full">
           <div className="flex gap-4 w-full justify-center items-center">
-          <button onClick={() => carouselClick(videoIndex - 1)} className={`text-white text-4xl ${videoIndex === 0 ? 'cursor-not-allowed opacity-30' : ''}`}>{"<"}</button>
+          <button onClick={() => carouselClick(videoIndex - 1)} className={`text-white text-6xl ${videoIndex === 0 ? 'cursor-not-allowed opacity-30' : ''}`}>{"<"}</button>
           
           {data?.data.userExerciseRecords[videoIndex]?.video &&
           <>
@@ -144,7 +144,7 @@ const Profile = () => {
               <h1 className="text-white text-4xl font-bold">인증 영상이 없습니다.</h1>
             </div>
           }
-            <button onClick={() => carouselClick(videoIndex + 1)} className={`text-white text-4xl ${videoIndex === data?.data?.userExerciseRecords?.length - 1 ? 'cursor-not-allowed opacity-30' : ''}`}>{">"}</button>
+            <button onClick={() => carouselClick(videoIndex + 1)} className={`text-white text-6xl ${videoIndex === data?.data?.userExerciseRecords?.length - 1 ? 'cursor-not-allowed opacity-30' : ''}`}>{">"}</button>
 
             </div>
         </div>
