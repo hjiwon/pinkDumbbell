@@ -81,7 +81,6 @@ const LoggedInHome = () => {
   const [exerciseModal, setExerciseModal] = useState(false);
   const [profileImageModal, setProfileImageModal] = useState(false);
   const userid = localStorage.getItem('userid');
-  console.log(localStorage.getItem("token"))
   const [isLoggedIn, setIsLoggedIn] = useRecoilState(isLoggedInState);
   const { data, refetch, error, isLoading } = useQuery({
     queryKey: ["home"],
@@ -102,7 +101,7 @@ const LoggedInHome = () => {
     })},
     retry: 0,
   });
-  
+  console.log(data)
   const [selectedCompetitor, setSelectedCompetitor] = useState(0);
   const [imageDirectory, setImageDirectory] = useState();
 
@@ -132,8 +131,6 @@ const LoggedInHome = () => {
     exerciseName: "benchPress",
     record: ""
   });
-
-  console.log(exercise);
 
   const handleExerciseModalInput = (e) => {
     if(isNaN(e.target.value) && e.target.value !== "") {
@@ -372,8 +369,8 @@ const LoggedInHome = () => {
     })
     .then(() => {
       setTimeout(() => {
-        refetch();
-      }, 2000);
+        window.location.reload();
+      }, 1000);
       setButtonClickable(true);
     })
     .catch((err) => {
@@ -413,7 +410,6 @@ const LoggedInHome = () => {
       toast.update(id, { type: "error", render: "경쟁자 추가에 실패했습니다!", isLoading: false, autoClose: 2000 });
     });
   }  
-  console.log(videoDirectory)
   
   const registeredToday = localStorage.getItem('registeredToday');
   useEffect(() => {
@@ -469,7 +465,6 @@ const LoggedInHome = () => {
   }
 
 
-  console.log(data);
 
   data.graph?.forEach((item) => {
     item.me = parseInt(item.me);
@@ -596,8 +591,6 @@ const LoggedInHome = () => {
             <div><span className="text-[#9894f8]">{data?.name}</span>님은 아직 경쟁자가 없어요</div> :
             <div className=""><span className="text-[#9894f8]">{data?.name}</span>님과 <span className="text-[#82ca9d]">{data?.competitors[selectedCompetitor]?.userName}</span>님의<br/>운동 기록을 비교해봤어요</div>
           }
-          { 
-          console.log(data?.profile)}
           {
           data?.profile
           ?
@@ -635,7 +628,6 @@ const LoggedInHome = () => {
           </>
           }
 
- {console.log(data.nullGraph[0])}
           {
             noCompetitors &&
             <div className="grid grid-cols-2 md:grid-cols-3 items-center justify-center justify-items-center content-center self-center place-items-center place-self-center justify-self-center" id="competitorGraph">

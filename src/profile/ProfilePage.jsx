@@ -11,11 +11,9 @@ import { useState } from "react";
 const Profile = () => {
   const navigate = useNavigate();
   const { userid } = useParams();
-  console.log(userid)
   const getProfile = async () => {
     const url = `http://110.10.3.11:8090/user/${userid}/profile`
     const res = axios.get(url)
-    console.log(res)  
     return res
   }
 
@@ -25,6 +23,8 @@ const Profile = () => {
     keepPreviousData: true,
     retry: 0,
   })
+
+  console.log(data);
 
   const compete = async (competitorId) => {
     const id = toast.loading("전송중입니다...");
