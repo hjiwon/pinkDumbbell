@@ -371,7 +371,9 @@ const LoggedInHome = () => {
       setImageSelected(false);
     })
     .then(() => {
-      refetch();
+      setTimeout(() => {
+        refetch();
+      }, 2000);
       setButtonClickable(true);
     })
     .catch((err) => {
