@@ -411,6 +411,7 @@ const LoggedInHome = () => {
       toast.update(id, { type: "error", render: "경쟁자 추가에 실패했습니다!", isLoading: false, autoClose: 2000 });
     });
   }  
+  console.log(videoDirectory)
   
   const registeredToday = localStorage.getItem('registeredToday');
   useEffect(() => {
@@ -571,7 +572,7 @@ const LoggedInHome = () => {
           <span className="text-gray-400">인증 영상도 함께 업로드해주세요!</span>
           {
             videoSelected &&
-            <video src={videoDirectory} className="w-1/3 h-[10rem]" />
+            <video src={videoDirectory} className="w-1/3 h-[10rem]" autoPlay muted playsInline/>
           }
           <div className={`flex gap-4 w-full items-center justify-center ${videoSelected ? 'hidden' : ''}`}>
             <input type="file" id="file2" className="hidden" accept="video/*" onChange={handleVideoSelected}/>
