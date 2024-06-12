@@ -799,7 +799,7 @@ const LoggedInHome = () => {
         <div className="flex flex-col w-full items-center relative">
           <button onClick={() => {setBodyModal(true)}} className="text-3xl text-white transition-transform hover:rotate-45 hover:text-gray-400 absolute right-5 top-5">+</button>
 
-          { data.userPercentage !== "null%" ?
+          { data.userPercentage !== null ?
           // userPercentage 반올림하기
           <div className="text-xl text-white pt-10 mb-20">{data.name}님은 상위 {Math.round(parseFloat(data.userPercentage))}%의 신체를 갖고 있어요</div> :
           <div className="text-xl text-white pt-10 mb-20">{data.name}님의 신체 정보가 없어요!</div>
