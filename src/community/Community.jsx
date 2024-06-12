@@ -87,7 +87,7 @@ const Community = () => {
           <img key={index} src={page.address} alt={page.contentType} className={`w-1/2 sm:w-1/3 aspect-square cursor-pointer `} onClick={() => handleImageClick(page.contentId)} />
           :
           <div key={index} className="w-1/2 sm:w-1/3 aspect-square cursor-pointer" onClick={() => handleImageClick(page.contentId)} onMouseEnter={handleVideoHover} onMouseLeave={handleVideoOut}>
-            <video src={page.address} autoPlay="" muted="" playsInline="" className="w-full h-full" />
+            <video src={page.address} autoPlay={false} muted={true} playsInline={true}  className="w-full h-full" />
           </div>
         ))
       }
